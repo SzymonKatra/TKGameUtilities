@@ -141,7 +141,7 @@ namespace TKGameUtilities.Graphics
         }
         public void Update(RectangleInt area, IntPtr dataPtr)
         {
-            //ContextManager.ActivateDefaultIfNoCurrent();
+            ContextManager.ActivateDefaultIfNoCurrent();
             Bind();
 
             GL.TexSubImage2D(TextureTarget.Texture2D, 0, area.Position.X, area.Position.Y, area.Size.X, area.Size.Y, m_pixelFormat, m_pixelType, dataPtr);
