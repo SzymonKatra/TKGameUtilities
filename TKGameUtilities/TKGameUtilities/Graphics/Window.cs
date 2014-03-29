@@ -45,7 +45,7 @@ namespace TKGameUtilities.Graphics
         private NativeWindow m_nativeWindow;
         private GraphicsContext m_windowContext;
 
-        public bool m_exists = false;
+        private bool m_exists = false;
         public bool Exists
         {
             get { return m_exists; }
