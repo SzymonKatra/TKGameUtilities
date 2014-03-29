@@ -37,18 +37,19 @@ namespace TKGameUtilities.Graphics
 
             m_pixelFormat = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
             m_pixelType = PixelType.UnsignedByte;
+            m_pixelInternalFormat = PixelInternalFormat.Rgba;
 
             bitmap.Dispose();
         }
         public Texture(Point2 size, IntPtr dataPtr, OpenTK.Graphics.OpenGL.PixelFormat inputPixelFormat, PixelInternalFormat internalPixelFormat, PixelType pixelType)
         {
-            CreateFromPtr(size,dataPtr,inputPixelFormat,internalPixelFormat,pixelType);
+            CreateFromPtr(size, dataPtr, inputPixelFormat, internalPixelFormat, pixelType);
         }
-        public unsafe Texture(Point2 size, byte[] data, OpenTK.Graphics.OpenGL.PixelFormat inputPixelFormat, PixelInternalFormat internalPixelFormat, PixelType pixelType)
+        public unsafe Texture(Point2 size, byte[] data, OpenTK.Graphics.OpenGL.PixelFormat inputPixelFormat, PixelInternalFormat internalPixelFormat)
         {
             fixed (byte* ptr = data)
             {
-                CreateFromPtr(size, new IntPtr(ptr), inputPixelFormat, internalPixelFormat, pixelType);
+                CreateFromPtr(size, new IntPtr(ptr), inputPixelFormat, internalPixelFormat, PixelType.UnsignedByte);
             }
         }
         #endregion
@@ -81,7 +82,22 @@ namespace TKGameUtilities.Graphics
         }
 
         private OpenTK.Graphics.OpenGL.PixelFormat m_pixelFormat;
+        public OpenTK.Graphics.OpenGL.PixelFormat PixelFormat
+        {
+            get { return m_pixelFormat; }
+        }
+
         private PixelType m_pixelType;
+        public PixelType PixelType
+        {
+            get { return m_pixelType; }
+        }
+
+        private PixelInternalFormat m_pixelInternalFormat;
+        public PixelInternalFormat PixelInternalFormat
+        {
+            get { return m_pixelInternalFormat; }
+        }
 
         public static int MaxTextureSize
         {
@@ -113,6 +129,7 @@ namespace TKGameUtilities.Graphics
 
             m_pixelFormat = inputPixelFormat;
             m_pixelType = pixelType;
+            m_pixelInternalFormat = internalPixelFormat;
         }
         private void ApplySize(Point2 size)
         {
@@ -145,6 +162,19 @@ namespace TKGameUtilities.Graphics
             Bind();
 
             GL.TexSubImage2D(TextureTarget.Texture2D, 0, area.Position.X, area.Position.Y, area.Size.X, area.Size.Y, m_pixelFormat, m_pixelType, dataPtr);
+
+            Unbind();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="result">Allocated memory of the size of texture and specified PixelType</param>
+        public void GetPixels(IntPtr result)
+        {
+            ContextManager.ActivateDefaultIfNoCurrent();
+            Bind();
+            
+            GL.GetTexImage(TextureTarget.Texture2D, 0, m_pixelFormat, m_pixelType, result);
 
             Unbind();
         }
