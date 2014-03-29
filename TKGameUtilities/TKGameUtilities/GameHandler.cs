@@ -69,10 +69,10 @@ namespace TKGameUtilities
         {
             m_running = false;
         }
-        public void Tick()
+        public void Tick(GameTime gameTime)
         {
-            Update();
-            Draw();
+            Update(gameTime);
+            Draw(gameTime);
         }
 
         private void FixedTimestepLoop()
