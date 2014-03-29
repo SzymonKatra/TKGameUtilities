@@ -22,7 +22,7 @@ namespace TKGameUtilities.Graphics
         };
     }
 
-    public class BaseSpriteBatch
+    public class BaseSpriteBatch : IDisposable
     {
         protected struct BatchItem
         {
@@ -47,6 +47,8 @@ namespace TKGameUtilities.Graphics
         #endregion
 
         #region Properties
+        private bool m_disposed = false;
+
         private VertexBufferPositionColorTexCoords m_vertexBuffer;
         protected VertexBufferPositionColorTexCoords VertexBuffer
         {
@@ -206,6 +208,29 @@ namespace TKGameUtilities.Graphics
 
                 ++m_queueCount;
             }  
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!m_disposed)
+            {
+                if (disposing)
+                {
+                    m_vertexBuffer.Dispose();
+                    m_vertexBuffer = null;
+                }
+
+                m_disposed = true;
+            }
+        }
+        ~BaseSpriteBatch()
+        {
+            Dispose(false);
         }
         #endregion
     }

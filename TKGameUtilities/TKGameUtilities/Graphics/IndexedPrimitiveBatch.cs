@@ -19,7 +19,7 @@ namespace TKGameUtilities.Graphics
         };
     }
 
-    public class IndexedPrimitiveBatch : IDrawable<PrimitiveBatchDrawOptions, ColoredPrimitiveShader>
+    public class IndexedPrimitiveBatch : IDrawable<PrimitiveBatchDrawOptions, ColoredPrimitiveShader>, IDisposable
     {
         #region Constructors
         public IndexedPrimitiveBatch()
@@ -35,6 +35,8 @@ namespace TKGameUtilities.Graphics
         #endregion
 
         #region Properties
+        private bool m_disposed = false;
+
         private VertexBufferPositionColor m_vertexBuffer;
         private IndexBuffer m_indexBuffer;
         private VertexPositionColor[] m_vertices;
@@ -140,6 +142,31 @@ namespace TKGameUtilities.Graphics
             m_vertexBuffer.UpdateData(m_vertices, 0, m_verticesCount);
             
             m_vertexBuffer.Draw(target, shader, vboOptions);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!m_disposed)
+            {
+                if (disposing)
+                {
+                    m_vertexBuffer.Dispose();
+                    m_vertexBuffer = null;
+                    m_indexBuffer.Dispose();
+                    m_indexBuffer = null;
+                }
+
+                m_disposed = true;
+            }
+        }
+        ~IndexedPrimitiveBatch()
+        {
+            Dispose(false);
         }
         #endregion    
     }

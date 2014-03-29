@@ -400,6 +400,8 @@ namespace TKGameUtilities.Graphics
             {
                 if (disposing)
                 {
+                    m_tempBitmap.Dispose();
+                    m_tempBitmap = null;
                     m_gdiFont.Dispose();
                     m_gdiFont = null;
                     m_fontCollection.Dispose();
