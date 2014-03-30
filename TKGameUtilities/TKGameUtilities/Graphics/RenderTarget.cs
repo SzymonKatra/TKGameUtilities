@@ -57,7 +57,7 @@ namespace TKGameUtilities.Graphics
         {
             Activate();
 
-            GL.ClearColor(color.R / 1f, color.G / 1f, color.B / 1f, color.A / 1f);
+            GL.ClearColor(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
         }
 
