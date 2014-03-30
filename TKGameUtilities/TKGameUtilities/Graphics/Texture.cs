@@ -41,6 +41,10 @@ namespace TKGameUtilities.Graphics
 
             bitmap.Dispose();
         }
+        public Texture(Image image)
+            : this(image.Size, image.Data, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelInternalFormat.Rgba)
+        {
+        }
         public Texture(Point2 size, IntPtr dataPtr, OpenTK.Graphics.OpenGL.PixelFormat inputPixelFormat, PixelInternalFormat internalPixelFormat, PixelType pixelType)
         {
             CreateFromPtr(size, dataPtr, inputPixelFormat, internalPixelFormat, pixelType);
