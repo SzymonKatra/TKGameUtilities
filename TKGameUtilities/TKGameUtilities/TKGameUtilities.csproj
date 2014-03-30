@@ -62,6 +62,7 @@
     <Compile Include="Graphics\Font.cs" />
     <Compile Include="Graphics\FontBatch.cs" />
     <Compile Include="Graphics\IDrawable.cs" />
+    <Compile Include="Graphics\Image.cs" />
     <Compile Include="Graphics\IndexBuffer.cs" />
     <Compile Include="Graphics\IndexedPrimitiveBatch.cs" />
     <Compile Include="Graphics\RenderTarget.cs" />

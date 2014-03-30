@@ -204,8 +204,7 @@ namespace TKGameUtilities.Graphics
                 m_textures[i] = new Texture(new Point2(m_cellSize.X * maxHorizontalCells, m_cellSize.Y * maxVerticalCells),
                                             null,
                                             OpenTK.Graphics.OpenGL.PixelFormat.Rgba,
-                                            OpenTK.Graphics.OpenGL.PixelInternalFormat.Alpha,
-                                            OpenTK.Graphics.OpenGL.PixelType.UnsignedByte);
+                                            OpenTK.Graphics.OpenGL.PixelInternalFormat.Alpha);
             }
             if (remainingCells > 0)
             {
@@ -218,8 +217,7 @@ namespace TKGameUtilities.Graphics
                 m_textures[m_textures.Length - 1] = new Texture(new Point2(m_cellSize.X * horizontalRemainingCells, m_cellSize.Y * verticalRemainingCells),
                                                                 null,
                                                                 OpenTK.Graphics.OpenGL.PixelFormat.Rgba,
-                                                                OpenTK.Graphics.OpenGL.PixelInternalFormat.Alpha,
-                                                                OpenTK.Graphics.OpenGL.PixelType.UnsignedByte);
+                                                                OpenTK.Graphics.OpenGL.PixelInternalFormat.Alpha);
             }
 
             Bitmap renderBitmap = new Bitmap(m_cellSize.X, m_cellSize.Y);
