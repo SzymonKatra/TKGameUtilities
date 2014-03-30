@@ -17,8 +17,8 @@ namespace TKGameUtilities.Graphics
         #endregion
 
         #region Properties
-        public const string UniformProjectionMatrix_DefaultShaderName = "ProjectionMatrix";
-        public const string UniformModelViewMatrix_DefaultShaderName = "ModelViewMatrix";
+        public const string UniformProjectionMatrix_DefaultShaderName = "GU_ProjectionMatrix";
+        public const string UniformModelViewMatrix_DefaultShaderName = "GU_ModelViewMatrix";
 
         private int m_uniformProjectionMatrixLocation;
         public int UniformProjectionMatrixLocation

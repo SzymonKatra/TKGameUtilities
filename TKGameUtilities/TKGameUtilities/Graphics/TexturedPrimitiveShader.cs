@@ -23,10 +23,10 @@ namespace TKGameUtilities.Graphics
         #endregion
 
         #region Properties
-        public const string UniformTextureMatrix_DefaultShaderName = "TextureMatrix";
-        public const string UniformTexture_DefaultShaderName = "Texture";
-        public const string AttributeVertexTexCoords_DefaultShaderName = "VertexTexCoords";
-        public const string VaryingTexCoords_DefaultShaderName = "TexCoords";
+        public const string UniformTextureMatrix_DefaultShaderName = "GU_TextureMatrix";
+        public const string UniformTexture_DefaultShaderName = "GU_Texture";
+        public const string AttributeVertexTexCoords_DefaultShaderName = "GU_VertexTexCoords";
+        public const string VaryingTexCoords_DefaultShaderName = "GU_TexCoords";
 
         #region VertexShaderSource
         //Vertex shader string format - names:

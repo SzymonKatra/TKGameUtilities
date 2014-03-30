@@ -21,9 +21,9 @@ namespace TKGameUtilities.Graphics
         #endregion
 
         #region Properties
-        public const string AttributeVertexPosition_DefaultShaderName = "VertexPosition";
-        public const string AttributeVertexColor_DefaultShaderName = "VertexColor";
-        public const string VaryingVertexColor_DefaultShaderName = "Color";
+        public const string AttributeVertexPosition_DefaultShaderName = "GU_VertexPosition";
+        public const string AttributeVertexColor_DefaultShaderName = "GU_VertexColor";
+        public const string VaryingVertexColor_DefaultShaderName = "GU_Color";
 
         #region VertexShaderSource
         //Vertex shader string format - names:
