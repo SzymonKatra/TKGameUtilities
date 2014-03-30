@@ -15,29 +15,14 @@ namespace TKGameUtilities.Graphics
         #region Constructors
         public Texture(string filePath)
         {
-            ContextManager.ActivateDefaultIfNoCurrent();
-
             Bitmap bitmap = new Bitmap(filePath);
-
-            GL.GenTextures(1, out m_GLTextureID);
-            GL.BindTexture(TextureTarget.Texture2D, m_GLTextureID);
-
             BitmapData bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bitmapData.Width, bitmapData.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, bitmapData.Scan0);
+            CreateFromPtr(new Point2(bitmapData.Width, bitmapData.Height), bitmapData.Scan0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, OpenTK.Graphics.OpenGL.PixelInternalFormat.Rgba, OpenTK.Graphics.OpenGL.PixelType.UnsignedByte);
+            m_pixelFormat = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
 
             bitmap.UnlockBits(bitmapData);
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-
-            ApplySize(new Point2(bitmap.Size.Width, bitmap.Size.Height));
-
-            m_pixelFormat = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
-            m_pixelType = PixelType.UnsignedByte;
-            m_pixelInternalFormat = PixelInternalFormat.Rgba;
+            ContextManager.ActivateDefaultIfNoCurrent();
 
             bitmap.Dispose();
         }

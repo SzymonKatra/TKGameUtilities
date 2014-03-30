@@ -20,6 +20,14 @@ namespace TKGameUtilities.Graphics
             m_data = new byte[bitmapData.Width * bitmapData.Height * 4];
             Marshal.Copy(bitmapData.Scan0, m_data, 0, bitmapData.Width * bitmapData.Height * 4);
 
+            //reorder bytes from BGRA to RGBA
+            for (int i = 0; i < m_data.Length; i+= 4)
+            {
+                byte r = m_data[i];
+                m_data[i] = m_data[i + 2];
+                m_data[i + 2] = r;
+            }
+
             m_size = new Point2(bitmapData.Width, bitmapData.Height);
 
             bitmap.UnlockBits(bitmapData);
@@ -34,9 +42,9 @@ namespace TKGameUtilities.Graphics
         #endregion
 
         #region Properties
-        public const int R_OFFSET = 2;
+        public const int R_OFFSET = 0;
         public const int G_OFFSET = 1;
-        public const int B_OFFSET = 0;
+        public const int B_OFFSET = 2;
         public const int A_OFFSET = 3;
 
         private byte[] m_data;

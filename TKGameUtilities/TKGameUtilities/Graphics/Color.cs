@@ -27,10 +27,14 @@ namespace TKGameUtilities.Graphics
         /// <param name="rgba">RGBA color</param>
         public Color(int rgba)
         {
-            R = (byte)(rgba & 0x000000FF);
-            G = (byte)((rgba & 0x0000FF00) >> 8);
-            B = (byte)((rgba & 0x00FF0000) >> 16);
-            A = (byte)((rgba & 0xFF000000) >> 24);
+            //R = (byte)(rgba & 0x000000FF);
+            //G = (byte)((rgba & 0x0000FF00) >> 8);
+            //B = (byte)((rgba & 0x00FF0000) >> 16);
+            //A = (byte)((rgba & 0xFF000000) >> 24);
+            R = (byte)((rgba & 0xFF000000) >> 24);
+            G = (byte)((rgba & 0x00FF0000) >> 16);
+            B = (byte)((rgba & 0x0000FF00) >> 8);
+            A = (byte)((rgba & 0x000000FF) >> 0);
         }
         /// <summary>
         /// Construct the color from its red, green and blue components
@@ -69,9 +73,12 @@ namespace TKGameUtilities.Graphics
         public static Color CreateFromRGB(int rgb)
         {
             Color c;
-            c.R = (byte)(rgb & 0x000000FF);
-            c.G = (byte)((rgb & 0x0000FF00) >> 8);
-            c.B = (byte)((rgb & 0x00FF0000) >> 16);
+            //c.R = (byte)(rgb & 0x000000FF);
+            //c.G = (byte)((rgb & 0x0000FF00) >> 8);
+            //c.B = (byte)((rgb & 0x00FF0000) >> 16);
+            c.R = (byte)((rgb & 0xFF000000) >> 24);
+            c.G = (byte)((rgb & 0x00FF0000) >> 16);
+            c.B = (byte)((rgb & 0x0000FF00) >> 8);
             c.A = 255;
             return c;
         }
@@ -81,7 +88,8 @@ namespace TKGameUtilities.Graphics
         /// <returns>RGBA int</returns>
         public int ToRGBA()
         {
-            return R | (G << 8) | (B << 16) | (A << 24);
+            //return R | (G << 8) | (B << 16) | (A << 24);
+            return (R << 24) | (G << 16) | (B << 8) | A;
         }
 
         /// <summary>
