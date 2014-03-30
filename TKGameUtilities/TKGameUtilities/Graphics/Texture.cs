@@ -69,10 +69,10 @@ namespace TKGameUtilities.Graphics
             get { return m_textureMatrix; }
         }
 
-        private Point2 m_textureSize;
+        private Point2 m_size;
         public Point2 Size
         {
-            get { return m_textureSize; }
+            get { return m_size; }
         }
 
         private Rectangle m_textureRectangle;
@@ -133,12 +133,12 @@ namespace TKGameUtilities.Graphics
         }
         private void ApplySize(Point2 size)
         {
-            m_textureSize = size;
+            m_size = size;
             m_textureMatrix = Matrix4.Identity;
             m_textureMatrix.M11 = 1f / (float)size.X;
             m_textureMatrix.M22 = 1f / (float)size.Y;
 
-            m_textureRectangle = new Rectangle(Vector2.Zero, (Vector2)m_textureSize);
+            m_textureRectangle = new Rectangle(Vector2.Zero, (Vector2)m_size);
         }
         public void Bind()
         {
@@ -177,6 +177,17 @@ namespace TKGameUtilities.Graphics
             GL.GetTexImage(TextureTarget.Texture2D, 0, m_pixelFormat, m_pixelType, result);
 
             Unbind();
+        }
+        public unsafe Image ToImage()
+        {
+            Image result = new Image(m_size);
+
+            fixed(byte* ptr = result.Data)
+            {
+                GetPixels(new IntPtr(ptr));
+            }
+
+            return result;
         }
 
         public void Dispose()

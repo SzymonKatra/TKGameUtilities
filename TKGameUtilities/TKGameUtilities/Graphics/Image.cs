@@ -26,6 +26,11 @@ namespace TKGameUtilities.Graphics
 
             bitmap.Dispose();
         }
+        public Image(Point2 size)
+        {
+            m_size = size;
+            m_data = new byte[size.X * size.Y * 4];
+        }
         #endregion
 
         #region Properties
