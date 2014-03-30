@@ -96,6 +96,7 @@ namespace TKGameUtilities
                     m_ups = upsCount;
                     fpsCount = 0;
                     upsCount = 0;
+                    SecondElapsed();
                 }
                 if (currentTime >= nextTime)
                 {
@@ -124,6 +125,8 @@ namespace TKGameUtilities
         
         protected abstract void LoopEntered();
         protected abstract void LoopExited();
+
+        protected abstract void SecondElapsed();
         #endregion
     }
 }

@@ -70,6 +70,21 @@ namespace TKGameUtilities.Graphics
                 m_nativeWindow.Height = value.Y;
             }
         }
+        public Point2 Position
+        {
+            get { return new Point2(m_nativeWindow.X, m_nativeWindow.Y); }
+            set
+            {
+                m_nativeWindow.X = value.X;
+                m_nativeWindow.Y = value.Y;
+            }
+        }
+#pragma warning disable 612
+        public IInputDriver InputDriver
+        {
+            get { return m_nativeWindow.InputDriver; }
+        }
+#pragma warning restore 612
         #endregion
 
         #region Methods

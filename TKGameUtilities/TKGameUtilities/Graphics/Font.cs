@@ -28,7 +28,7 @@ namespace TKGameUtilities.Graphics
         }
 
         #region Constructors
-        public Font(string fileName, float size, TKGameUtilities.Graphics.Font.FontStyle style = TKGameUtilities.Graphics.Font.FontStyle.Regular, int fromUnicode = 33, int toUnicode = 255, bool antialiasing = true)
+        public Font(string fileName, float size, TKGameUtilities.Graphics.Font.FontStyle style = TKGameUtilities.Graphics.Font.FontStyle.Regular, int fromUnicode = 0, int toUnicode = 255, bool antialiasing = true)
         {
             m_fromUnicode = fromUnicode;
             m_toUnicode = toUnicode;
