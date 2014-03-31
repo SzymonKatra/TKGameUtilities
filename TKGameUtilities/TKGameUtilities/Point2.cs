@@ -90,5 +90,10 @@ namespace TKGameUtilities
         {
             return new Point2((int)value.X, (int)value.Y);
         }
+
+        public override string ToString()
+        {
+            return string.Format("X: {0} Y: {1}", X, Y);
+        }
     }
 }

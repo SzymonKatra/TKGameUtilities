@@ -33,7 +33,7 @@ namespace TKGameUtilities
             get { return m_ups; }
         }
 
-        private long m_frameDelay;
+        private long m_frameDelay = TimeSpan.FromSeconds(1.0 / 60.0).Ticks;
         public TimeSpan FrameDelay
         {
             get { return TimeSpan.FromTicks(m_frameDelay); }

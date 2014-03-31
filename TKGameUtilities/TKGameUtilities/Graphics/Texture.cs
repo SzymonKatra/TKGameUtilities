@@ -30,15 +30,15 @@ namespace TKGameUtilities.Graphics
             : this(image.Size, image.Data, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelInternalFormat.Rgba)
         {
         }
-        public Texture(Point2 size, IntPtr dataPtr, OpenTK.Graphics.OpenGL.PixelFormat inputPixelFormat, PixelInternalFormat internalPixelFormat, PixelType pixelType)
+        public Texture(Point2 size, IntPtr dataPtr, OpenTK.Graphics.OpenGL.PixelFormat pixelFormat, PixelInternalFormat internalPixelFormat, PixelType pixelType)
         {
-            CreateFromPtr(size, dataPtr, inputPixelFormat, internalPixelFormat, pixelType);
+            CreateFromPtr(size, dataPtr, pixelFormat, internalPixelFormat, pixelType);
         }
-        public unsafe Texture(Point2 size, byte[] data, OpenTK.Graphics.OpenGL.PixelFormat inputPixelFormat, PixelInternalFormat internalPixelFormat)
+        public unsafe Texture(Point2 size, byte[] data, OpenTK.Graphics.OpenGL.PixelFormat pixelFormat, PixelInternalFormat internalPixelFormat)
         {
             fixed (byte* ptr = data)
             {
-                CreateFromPtr(size, new IntPtr(ptr), inputPixelFormat, internalPixelFormat, PixelType.UnsignedByte);
+                CreateFromPtr(size, new IntPtr(ptr), pixelFormat, internalPixelFormat, PixelType.UnsignedByte);
             }
         }
         #endregion
@@ -140,7 +140,7 @@ namespace TKGameUtilities.Graphics
 
         public unsafe void Update(RectangleInt area, byte[] data)
         {
-            fixed(byte* ptr = data)
+            fixed (byte* ptr = data)
             {
                 Update(area, new IntPtr(ptr));
             }
@@ -154,6 +154,23 @@ namespace TKGameUtilities.Graphics
 
             Unbind();
         }
+        public unsafe void Update(RectangleInt area, byte[] data, OpenTK.Graphics.OpenGL.PixelFormat pixelFormat)
+        {
+            fixed (byte* ptr = data)
+            {
+                Update(area, new IntPtr(ptr), pixelFormat, OpenTK.Graphics.OpenGL.PixelType.UnsignedByte);
+            }
+        }
+        public void Update(RectangleInt area, IntPtr dataPtr, OpenTK.Graphics.OpenGL.PixelFormat pixelFormat, PixelType pixelType = PixelType.UnsignedByte)
+        {
+            ContextManager.ActivateDefaultIfNoCurrent();
+            Bind();
+
+            GL.TexSubImage2D(TextureTarget.Texture2D, 0, area.Position.X, area.Position.Y, area.Size.X, area.Size.Y, pixelFormat, pixelType, dataPtr);
+
+            Unbind();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -167,11 +184,20 @@ namespace TKGameUtilities.Graphics
 
             Unbind();
         }
+        public void GetPixels(IntPtr result, OpenTK.Graphics.OpenGL.PixelFormat pixelFormat, PixelType pixelType = PixelType.UnsignedByte)
+        {
+            ContextManager.ActivateDefaultIfNoCurrent();
+            Bind();
+
+            GL.GetTexImage(TextureTarget.Texture2D, 0, pixelFormat, pixelType, result);
+
+            Unbind();
+        }
         public unsafe Image ToImage()
         {
             Image result = new Image(m_size);
 
-            fixed(byte* ptr = result.Data)
+            fixed (byte* ptr = result.Data)
             {
                 GetPixels(new IntPtr(ptr));
             }
