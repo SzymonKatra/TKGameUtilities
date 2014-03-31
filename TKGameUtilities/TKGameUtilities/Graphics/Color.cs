@@ -241,64 +241,29 @@ namespace TKGameUtilities.Graphics
         public static readonly Color Transparent = new Color(0, 0, 0, 0);
         /// <summary>Predefined black color (0, 0, 0)</summary>
         public static readonly Color Black = new Color(0, 0, 0);
+        /// <summary>Predefined transparent black color (0, 0, 0, 0)</summary>
+        public static readonly Color TransparentBlack = new Color(0, 0, 0, 0);
         /// <summary>Predefined white color (255, 255, 255)</summary>
         public static readonly Color White = new Color(255, 255, 255);
+        /// <summary>Predefined transparent white color (255, 255, 255, 0)</summary>
+        public static readonly Color TransparentWhite = new Color(255, 255, 255, 0);
 
         /// <summary>Predefined gray color (128, 128, 128)</summary>
         public static readonly Color Gray = new Color(128, 128, 128);
-        /// <summary>Predefined dark gray color (64, 64, 64)</summary>
-        public static readonly Color DarkGray = new Color(64, 64, 64);
-        /// <summary>Predefined light gray color (192, 192, 192)</summary>
-        public static readonly Color LightGray = new Color(192, 192, 192);
-
         /// <summary>Predefined red color (255, 0, 0)</summary>
         public static readonly Color Red = new Color(255, 0, 0);
-        /// <summary>Predefined dark red color (128, 0, 0)</summary>
-        public static readonly Color DarkRed = new Color(128, 0, 0);
-        /// <summary>Predefined light red color (255, 128, 128)</summary>
-        public static readonly Color LightRed = new Color(255, 128, 128);
-
         /// <summary>Predefined green color (0, 255, 0)</summary>
         public static readonly Color Green = new Color(0, 255, 0);
-        /// <summary>Predefined dark green color (0, 192, 0)</summary>
-        public static readonly Color DarkGreen = new Color(0, 192, 0);
-        /// <summary>Predefined light green color (128, 255, 128)</summary>
-        public static readonly Color LightGreen = new Color(128, 255, 128);
-
         /// <summary>Predefined blue color (0, 0, 255)</summary>
         public static readonly Color Blue = new Color(0, 0, 255);
-        /// <summary>Predefined dark blue color (0, 0, 192)</summary>
-        public static readonly Color DarkBlue = new Color(0, 0, 192);
-        /// <summary>Predefined light blue color (128, 128, 255)</summary>
-        public static readonly Color LightBlue = new Color(128, 128, 255);
-
         /// <summary>Predefined yellow color (255, 255, 0)</summary>
         public static readonly Color Yellow = new Color(255, 255, 0);
-        /// <summary>Predefined dark yellow color (192, 192, 0)</summary>
-        public static readonly Color DarkYellow = new Color(192, 192, 0);
-        /// <summary>Predefined light yellow color (255, 255, 128)</summary>
-        public static readonly Color LightYellow = new Color(255, 255, 128);
-
         /// <summary>Predefined magenta(violet) color (255, 0, 255)</summary>
         public static readonly Color Magenta = new Color(255, 0, 255);
-        /// <summary>Predefined dark magenta(violet) color (192, 0, 192)</summary>
-        public static readonly Color DarkMagenta = new Color(192, 0, 192);
-        /// <summary>Predefined light magenta(violet) color (255, 128, 255)</summary>
-        public static readonly Color LightMagenta = new Color(255, 128, 255);
-
         /// <summary>Predefined cyan color (0, 255, 255)</summary>
         public static readonly Color Cyan = new Color(0, 255, 255);
-        /// <summary>Predefined dark cyan color (0, 192, 192)</summary>
-        public static readonly Color DarkCyan = new Color(0, 192, 192);
-        /// <summary>Predefined light cyan color (128, 255, 255)</summary>
-        public static readonly Color LightCyan = new Color(128, 255, 255);
-
         /// <summary>Predefined orange color (255, 160, 32)</summary>
         public static readonly Color Orange = new Color(255, 160, 32);
-        /// <summary>Predefined dark orange color (160, 96, 0)</summary>
-        public static readonly Color DarkOrange = new Color(160, 96, 0);
-        /// <summary>Predefined light orange color (255, 192, 128)</summary>
-        public static readonly Color LightOrange = new Color(255, 192, 128);
         #endregion
     }
     
