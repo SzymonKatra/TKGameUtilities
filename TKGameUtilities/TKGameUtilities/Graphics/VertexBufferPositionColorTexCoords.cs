@@ -19,7 +19,7 @@ namespace TKGameUtilities.Graphics
             fixed (VertexPositionColorTexCoords* ptr = data)
             {
                 GL.BufferData(BufferTarget.ArrayBuffer,
-                              (IntPtr)((count - start) * sizeof(VertexPositionColorTexCoords)),
+                              (IntPtr)(count * sizeof(VertexPositionColorTexCoords)),
                               (IntPtr)ptr + start * sizeof(VertexPositionColorTexCoords),
                               usageHint);
             }
@@ -30,7 +30,7 @@ namespace TKGameUtilities.Graphics
             {
                 GL.BufferSubData(BufferTarget.ArrayBuffer,
                                  (IntPtr)(gpuOffset * sizeof(VertexPositionColorTexCoords)),
-                                 (IntPtr)((count - start) * sizeof(VertexPositionColorTexCoords)),
+                                 (IntPtr)(count * sizeof(VertexPositionColorTexCoords)),
                                  (IntPtr)ptr + start * sizeof(VertexPositionColorTexCoords));
             }
         }

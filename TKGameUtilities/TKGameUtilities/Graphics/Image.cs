@@ -76,5 +76,19 @@ namespace TKGameUtilities.Graphics
             }
         }
         #endregion
+
+        #region Methods
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="componentOffset">Image.R_OFFSET or Image.G_OFFSET or Image.B_OFFSET or Image.A_OFFSET</param>
+        /// <returns></returns>
+        public int ComputeArrayPointer(uint x, uint y, int componentOffset)
+        {
+            return (int)((uint)m_size.X * y + x + componentOffset);
+        }
+        #endregion
     }
 }
