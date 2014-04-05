@@ -7,8 +7,10 @@ using System.Diagnostics;
 
 namespace TKGameUtilities
 {
-    public static class DebugUtils
+    public static class DU
     {
+        private static Stopwatch m_sw;
+
         public static Stopwatch SWNew()
         {
             return new Stopwatch();
@@ -21,6 +23,15 @@ namespace TKGameUtilities
         {
             sw.Stop();
             Console.WriteLine(sw.Elapsed.ToString() + " | ticks: " + sw.ElapsedTicks + " | ms: " + sw.ElapsedMilliseconds);
+        }
+
+        public static void TStart()
+        {
+            m_sw = SWStartNew();
+        }
+        public static void TStop()
+        {
+            SWStopAndWrite(m_sw);
         }
     }
 }
