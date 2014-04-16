@@ -8,6 +8,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace TKGameUtilities.Graphics
 {
+    [Serializable]
     public class ShaderException : Exception
     {
         public ShaderException(string message)

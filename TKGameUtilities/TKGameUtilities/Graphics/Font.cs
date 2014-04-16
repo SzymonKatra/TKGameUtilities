@@ -61,8 +61,8 @@ namespace TKGameUtilities.Graphics
         private int m_fromUnicode;
         private int m_toUnicode;
         private GlyphInfo[] m_glyphs;
-        private ABC[] m_glyphSizes; // used for kerning
-        private TEXTMETRICW m_textMetrics;
+        private NativeMethods.ABC[] m_glyphSizes; // used for kerning
+        private NativeMethods.TEXTMETRICW m_textMetrics;
         private bool m_antialiasing;
         public bool Antialiasing
         {
@@ -142,26 +142,26 @@ namespace TKGameUtilities.Graphics
         #region Loading
         private unsafe void ObtainMetrics()
         {
-            m_glyphSizes=new ABC[m_toUnicode-m_fromUnicode + 1];
+            m_glyphSizes = new NativeMethods.ABC[m_toUnicode - m_fromUnicode + 1];
 
             IntPtr graphicsHdc = m_tempGraphics.GetHdc();
             IntPtr hGdiFont = m_gdiFont.ToHfont();
             try
             {
-                IntPtr lastHFont = SelectObject(graphicsHdc, hGdiFont);
+                IntPtr lastHFont = NativeMethods.SelectObject(graphicsHdc, hGdiFont);
 
-                GetTextMetricsW(graphicsHdc, out m_textMetrics);
-                
-                fixed (ABC* ptr = m_glyphSizes)
+                NativeMethods.GetTextMetricsW(graphicsHdc, out m_textMetrics);
+
+                fixed (NativeMethods.ABC* ptr = m_glyphSizes)
                 {
-                    GetCharABCWidthsW(graphicsHdc, (uint)m_fromUnicode, (uint)m_toUnicode, ptr);
+                    NativeMethods.GetCharABCWidthsW(graphicsHdc, (uint)m_fromUnicode, (uint)m_toUnicode, ptr);
                 }
 
-                SelectObject(graphicsHdc, lastHFont);
+                NativeMethods.SelectObject(graphicsHdc, lastHFont);
             }
             finally
             {
-                DeleteObject(hGdiFont);
+                NativeMethods.DeleteObject(hGdiFont);
                 m_tempGraphics.ReleaseHdc(graphicsHdc);
             }
 
@@ -171,7 +171,7 @@ namespace TKGameUtilities.Graphics
 
             for (int i = 0; i < m_glyphs.Length; i++)
             {
-                ABC abcSize = m_glyphSizes[i];
+                NativeMethods.ABC abcSize = m_glyphSizes[i];
                 m_glyphs[i].Width = abcSize.abcA + (int)abcSize.abcB + abcSize.abcC;
             }
 
@@ -343,8 +343,8 @@ namespace TKGameUtilities.Graphics
         }
         public int GetKerning(int firstUnicode, int secondUnicode)
         {
-            ABC first = m_glyphSizes[ToInternalGlyphIndex(firstUnicode)];
-            ABC second = m_glyphSizes[ToInternalGlyphIndex(secondUnicode)];
+            NativeMethods.ABC first = m_glyphSizes[ToInternalGlyphIndex(firstUnicode)];
+            NativeMethods.ABC second = m_glyphSizes[ToInternalGlyphIndex(secondUnicode)];
 
             return first.abcC + second.abcA; // http://msdn.microsoft.com/en-us/library/dd183418(VS.85).aspx
         }
@@ -423,53 +423,56 @@ namespace TKGameUtilities.Graphics
         #region Imports
         //http://www.pinvoke.net/
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct ABC
+        private class NativeMethods
         {
-            public int abcA;
-            public uint abcB;
-            public int abcC;
-
-            public override string ToString()
+            [StructLayout(LayoutKind.Sequential)]
+            public struct ABC
             {
-                return string.Format("A={0}, B={1}, C={2}", abcA, abcB, abcC);
+                public int abcA;
+                public uint abcB;
+                public int abcC;
+
+                public override string ToString()
+                {
+                    return string.Format("A={0}, B={1}, C={2}", abcA, abcB, abcC);
+                }
             }
-        }
-        [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        public struct TEXTMETRICW
-        {
-            public int tmHeight;
-            public int tmAscent;
-            public int tmDescent;
-            public int tmInternalLeading;
-            public int tmExternalLeading;
-            public int tmAveCharWidth;
-            public int tmMaxCharWidth;
-            public int tmWeight;
-            public int tmOverhang;
-            public int tmDigitizedAspectX;
-            public int tmDigitizedAspectY;
-            public ushort tmFirstChar;
-            public ushort tmLastChar;
-            public ushort tmDefaultChar;
-            public ushort tmBreakChar;
-            public byte tmItalic;
-            public byte tmUnderlined;
-            public byte tmStruckOut;
-            public byte tmPitchAndFamily;
-            public byte tmCharSet;
-        }
+            [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+            public struct TEXTMETRICW
+            {
+                public int tmHeight;
+                public int tmAscent;
+                public int tmDescent;
+                public int tmInternalLeading;
+                public int tmExternalLeading;
+                public int tmAveCharWidth;
+                public int tmMaxCharWidth;
+                public int tmWeight;
+                public int tmOverhang;
+                public int tmDigitizedAspectX;
+                public int tmDigitizedAspectY;
+                public ushort tmFirstChar;
+                public ushort tmLastChar;
+                public ushort tmDefaultChar;
+                public ushort tmBreakChar;
+                public byte tmItalic;
+                public byte tmUnderlined;
+                public byte tmStruckOut;
+                public byte tmPitchAndFamily;
+                public byte tmCharSet;
+            }
 
-        [DllImport("gdi32.dll", EntryPoint = "GetCharABCWidthsW", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern unsafe bool GetCharABCWidthsW(IntPtr hdc, uint uFirstChar, uint uLastChar, ABC* lpabc);
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
-        private static extern bool GetTextMetricsW(IntPtr hdc, out TEXTMETRICW lptm);
+            [DllImport("gdi32.dll", EntryPoint = "GetCharABCWidthsW", SetLastError = true, CharSet = CharSet.Unicode)]
+            public static extern unsafe bool GetCharABCWidthsW(IntPtr hdc, uint uFirstChar, uint uLastChar, ABC* lpabc);
+            [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
+            public static extern bool GetTextMetricsW(IntPtr hdc, out TEXTMETRICW lptm);
 
-        [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
-        private static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
-        [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool DeleteObject([In] IntPtr hObject);
+            [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
+            public static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
+            [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool DeleteObject([In] IntPtr hObject);
+        }
         #endregion
     }
 }
