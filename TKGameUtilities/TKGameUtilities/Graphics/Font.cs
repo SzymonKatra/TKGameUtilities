@@ -82,6 +82,7 @@ namespace TKGameUtilities.Graphics
             get { return m_cellSize; }
         }
 
+        private Point2 m_tabulatorFactor;
         public Point2 TabulatorFactor
         {
             get { return m_tabulatorFactor; }
