@@ -84,6 +84,18 @@ namespace TKGameUtilities.Graphics
         {
             get { return m_nativeWindow.InputDriver; }
         }
+        public MouseDevice MouseDefault
+        {
+            get { return m_nativeWindow.InputDriver.Mouse[0]; }
+        }
+        public KeyboardDevice KeyboardDefault
+        {
+            get { return m_nativeWindow.InputDriver.Keyboard[0]; }
+        }
+        public JoystickDevice JoystickDefault
+        {
+            get { return m_nativeWindow.InputDriver.Joysticks[0]; }
+        }
 #pragma warning restore 612
         #endregion
 

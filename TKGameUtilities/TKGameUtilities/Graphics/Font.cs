@@ -82,7 +82,6 @@ namespace TKGameUtilities.Graphics
             get { return m_cellSize; }
         }
 
-        private Point2 m_tabulatorFactor;
         public Point2 TabulatorFactor
         {
             get { return m_tabulatorFactor; }
@@ -352,6 +351,7 @@ namespace TKGameUtilities.Graphics
         public Vector2 MeasureSize(string text)
         {
             Vector2 currentPosition = Vector2.Zero;
+            currentPosition.Y = CellSize.Y;
             for (int i = 0; i < text.Length; i++)
             {
                 int charCode = Convert.ToInt32(text[i]);
