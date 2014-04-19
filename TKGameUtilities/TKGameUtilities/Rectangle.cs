@@ -201,7 +201,7 @@ namespace TKGameUtilities
             if (pt.X < this.Left) pt.X = this.Left;
             if (pt.Y > this.Bottom) pt.Y = this.Bottom;
             if (pt.Y < this.Top) pt.Y = this.Top;
-            return (GameMath.PointDistance(pt, other.Center) < other.Radius);
+            return (pt.DistanceTo(other.Center) < other.Radius);
         }
         /// <summary>
         /// Checks the point is inside rectangle

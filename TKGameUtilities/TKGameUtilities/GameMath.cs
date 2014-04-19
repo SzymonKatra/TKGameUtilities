@@ -40,9 +40,10 @@ namespace TKGameUtilities
     public static class GameMath
     {
         #region Constant
-        private static readonly float[] _getSin, _getCos;
-        private const int _lookupSize = 1024; //has to be power of 2
-        private static float _maxSinCosError = -1.0f;
+        private static readonly float[] m_fastSinTable;
+        private static readonly float[] m_fastCosTable;
+        private const int m_lookupSize = 1024; //has to be power of 2
+        private static float m_maxSinCosError = -1.0f;
 
         /// <summary> Float E </summary>
         public const float E = (float)Math.E;
@@ -52,20 +53,20 @@ namespace TKGameUtilities
         public const float Log2E = 1.442695f;
 
         /// <summary> Float Pi </summary>
-        public const float Pi = (float)Math.PI;
+        public const float PI = (float)Math.PI;
         /// <summary> 2 * Pi </summary>
-        public const float TwoPi = 2.0f * Pi;
+        public const float TwoPI = 2.0f * PI;
         /// <summary> Pi * Pi </summary>
-        public const float SquarePi = Pi * Pi;
+        public const float SquarePI = PI * PI;
         /// <summary> Pi / 2 </summary>
-        public const float PiOver2 = Pi / 2.0f;
+        public const float PIOver2 = PI / 2.0f;
         /// <summary> Pi / 4 </summary>
-        public const float PiOver4 = Pi / 4.0f;
+        public const float PIOver4 = PI / 4.0f;
 
         /// <summary> Pi / 180 </summary>
-        public const float ToRadiansFactor = Pi / 180;
+        public const float ToRadiansFactor = PI / 180;
         /// <summary> 180 / Pi </summary>
-        public const float ToDegressFactor = 180 / Pi;
+        public const float ToDegressFactor = 180 / PI;
         /// <summary>
         /// Gets maximum FastSin/Cos error
         /// </summary>
@@ -73,28 +74,28 @@ namespace TKGameUtilities
         {
             get
             {
-                if (_maxSinCosError < 0)
+                if (m_maxSinCosError < 0)
                 {
-                    for (var i = 1; i < _lookupSize; i++)
+                    for (var i = 1; i < m_lookupSize; i++)
                     {
-                        _maxSinCosError = Math.Max(_maxSinCosError, Math.Abs(_getSin[i] - _getSin[i - 1]));
+                        m_maxSinCosError = Math.Max(m_maxSinCosError, Math.Abs(m_fastSinTable[i] - m_fastSinTable[i - 1]));
                     }
-                    _maxSinCosError /= 2;
+                    m_maxSinCosError /= 2;
                 }
-                return _maxSinCosError;
+                return m_maxSinCosError;
             }
         }
         #endregion
 
         static GameMath()
         {
-            _getSin = new float[_lookupSize];
-            _getCos = new float[_lookupSize];
+            m_fastSinTable = new float[m_lookupSize];
+            m_fastCosTable = new float[m_lookupSize];
 
-            for (var i = 0; i < _lookupSize; i++)
+            for (var i = 0; i < m_lookupSize; i++)
             {
-                _getSin[i] = (float)Math.Sin(i * Math.PI / _lookupSize * 2);
-                _getCos[i] = (float)Math.Cos(i * Math.PI / _lookupSize * 2);
+                m_fastSinTable[i] = (float)Math.Sin(i * Math.PI / m_lookupSize * 2);
+                m_fastCosTable[i] = (float)Math.Cos(i * Math.PI / m_lookupSize * 2);
             }
 
             //float max = 0;
@@ -113,7 +114,7 @@ namespace TKGameUtilities
         /// <param name="a">Value, in degrees</param>
         public static float FastSin(float a)
         {
-            return _getSin[(int)(a * (_lookupSize / 360f) + 0.5f) & (_lookupSize - 1)];
+            return m_fastSinTable[(int)(a * (m_lookupSize / 360f) + 0.5f) & (m_lookupSize - 1)];
         }
         /// <summary>
         /// Fast innacurate cosinus
@@ -121,11 +122,11 @@ namespace TKGameUtilities
         /// <param name="a">Value, in degrees</param>
         public static float FastCos(float a)
         {
-            return _getCos[(int)(a * (_lookupSize / 360f) + 0.5f) & (_lookupSize - 1)];
+            return m_fastCosTable[(int)(a * (m_lookupSize / 360f) + 0.5f) & (m_lookupSize - 1)];
         }
         #endregion
 
-        #region Converts
+        #region Conversion
         /// <summary>
         /// Converts degress to radians
         /// </summary>
@@ -179,138 +180,43 @@ namespace TKGameUtilities
         }
         #endregion
 
-        #region Point
-        /// <summary>
-        /// Returns the direction from point one toward point two in degrees
-        /// </summary>
-        /// <param name="v1">Coordinates of point 1</param>
-        /// <param name="v2">Coordinates of point 2</param>
-        /// <returns>Angle from point one toward point two</returns>
-        public static float PointDirection(Vector2 v1, Vector2 v2)
-        {
-            return AdjustAngle(ToDegrees(Convert.ToSingle(Math.Atan2(v1.Y - v2.Y, v2.X - v1.X))));
-        }
-        /// <summary>
-        /// Returns the distance between point one and point two
-        /// </summary>
-        /// <param name="v1">Coordinates of point one</param>
-        /// <param name="v2">Coordinates of point two</param>
-        /// <returns>Distance between point one and point two</returns>
-        public static float PointDistance(Vector2 v1, Vector2 v2)
-        {
-            return Convert.ToSingle(Math.Sqrt((v2.X - v1.X) * (v2.X - v1.X) + (v2.Y - v1.Y) * (v2.Y - v1.Y)));
-        }
-        #endregion
-
-        #region DirectionUtilities
         /// <summary>
         /// Adjust direction to range 0-360
         /// </summary>
-        /// <param name="angle">Angle to adjust in degrees</param>
+        /// <param name="degress">Angle to adjust in degrees</param>
         /// <returns>Adjusted direction</returns>
-        public static float AdjustAngle(float angle)
+        public static float ReduceAngle(float degress)
         {
-            while (angle < 0) angle += 360;
-            while (angle >= 360) angle -= 360;
-            return angle;
+            //while (degress < 0) degress += 360;
+            //while (degress >= 360) degress -= 360;
+            //return degress;
+            //return angle % 360f;
+            degress = (float)Math.IEEERemainder((double)degress, 360.0);
+            if (degress <= 0f)
+            {
+                degress += 360f;
+                return degress;
+            }
+            if (degress >= 360f)
+            {
+                degress -= 360f;
+            }
+            return degress;
         }
         /// <summary>
         /// Flips direction, for example 90 into 270, 45 into 225
         /// </summary>
         /// <param name="direction">Angle to flip in degrees</param>
         /// <returns>Flipped direction</returns>
-        public static float FlipDirection(float direction)
+        public static float FlipAngle(float direction)
         {
-            direction = AdjustAngle(direction);
+            direction = ReduceAngle(direction);
             //direction = (direction >= 180 ? direction - 180 : direction + 180);
             //if (direction < 180) direction += 180; else if (direction >= 180) direction -= 180;
             //return direction;
             return (direction >= 180 ? direction - 180 : direction + 180);
         }
-        #endregion
 
-        #region CountingSpeedAndDirection
-        /// <summary>
-        /// Counts speed from horizontal speed and vertical speed
-        /// </summary>
-        /// <param name="horizontalSpeed">Horizontal speed</param>
-        /// <param name="verticalSpeed">Vertical speed</param>
-        /// <returns>Speed</returns>
-        public static float CountSpeed(float horizontalSpeed, float verticalSpeed)
-        {
-            return PointDistance(Vector2.Zero, new Vector2(horizontalSpeed, verticalSpeed));
-        }
-        /// <summary>
-        /// Count speed from velocity
-        /// </summary>
-        /// <param name="velocity">Velocity</param>
-        /// <returns>Speed</returns>
-        public static float CountSpeed(Vector2 velocity)
-        {
-            return PointDistance(Vector2.Zero, velocity);
-        }
-        /// <summary>
-        /// Counts direction from horizontal speed and vertical speed
-        /// </summary>
-        /// <param name="horizontalSpeed">Horizontal speed</param>
-        /// <param name="verticalSpeed">Vertical speed</param>
-        /// <returns>Angle</returns>
-        public static float CountDirection(float horizontalSpeed, float verticalSpeed)
-        {
-            return PointDirection(Vector2.Zero, new Vector2(horizontalSpeed, verticalSpeed));
-        }
-        /// <summary>
-        /// Count direction from velocity
-        /// </summary>
-        /// <param name="velocity">Velocity</param>
-        /// <returns>Angle</returns>
-        public static float CountDirection(Vector2 velocity)
-        {
-            return PointDirection(Vector2.Zero, velocity);
-        }
-        /// <summary>
-        /// Counts horizontal speed from speed and direction
-        /// </summary>
-        /// <param name="speed">Speed</param>
-        /// <param name="direction">Angle</param>
-        public static float CountHorizontalSpeed(float speed, float direction)
-        {
-            return LengthDirX(speed, direction);
-        }
-        /// <summary>
-        /// Counts  vertical speed from speed and direction
-        /// </summary>
-        /// <param name="speed">Speed</param>
-        /// <param name="direction">Angle</param>
-        public static float CountVerticalSpeed(float speed, float direction)
-        {
-            return LengthDirY(speed, direction);
-        }
-        /// <summary>
-        /// Counts horizontal and vertical speed from speed and direction
-        /// </summary>
-        /// <param name="speed">Speed</param>
-        /// <param name="direction">Angle</param>
-        /// <param name="horizontalSpeed">Reference to horizontal speed</param>
-        /// <param name="verticalSpeed">Reference to vertical speed</param>
-        public static void CountHVSpeed(float speed, float direction, out float horizontalSpeed, out float verticalSpeed)
-        {
-            horizontalSpeed = LengthDirX(speed, direction);
-            verticalSpeed = LengthDirY(speed, direction);
-        }
-        /// <summary>
-        /// Counts velocity from speed and direction
-        /// </summary>
-        /// <param name="speed">Speed</param>
-        /// <param name="direction">Angle</param>
-        /// <returns>Velocity</returns>
-        public static Vector2 CountVelocity(float speed, float direction)
-        {
-            return new Vector2(LengthDirX(speed, direction), LengthDirY(speed, direction));
-        }
-        #endregion
-
-        #region RandomUtilities
         /// <summary>
         /// Randoms float number
         /// </summary>
@@ -332,84 +238,7 @@ namespace TKGameUtilities
         public static float NextFloat(this Random randomizer, float min, float max)
         {
             return RandomFloat(randomizer, min, max);
-        }
-        #endregion
-
-        #region PolygonUtilities
-        /// <summary>
-        /// Return the cross product AB x BC.
-        /// The cross product is a vector perpendicular to AB
-        /// and BC having length |AB| * |BC| * Sin(theta) and
-        /// with direction given by the right-hand rule.
-        /// For two vectors in the X-Y plane, the result is a
-        /// vector with X and Y components 0 so the Z component
-        /// gives the vector's length and direction.
-        /// </summary>
-        /// <param name="Ax"></param>
-        /// <param name="Ay"></param>
-        /// <param name="Bx"></param>
-        /// <param name="By"></param>
-        /// <param name="Cx"></param>
-        /// <param name="Cy"></param>
-        /// <returns></returns>
-        internal static float CrossProductLength(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
-        {
-            // Get the vectors' coordinates.
-            float BAx = Ax - Bx;
-            float BAy = Ay - By;
-            float BCx = Cx - Bx;
-            float BCy = Cy - By;
-
-            // Calculate the Z coordinate of the cross product.
-            return (BAx * BCy - BAy * BCx);
-        }
-        /// <summary>
-        /// Return the dot product AB · BC.
-        /// Note that AB · BC = |AB| * |BC| * Cos(theta).
-        /// </summary>
-        /// <param name="Ax"></param>
-        /// <param name="Ay"></param>
-        /// <param name="Bx"></param>
-        /// <param name="By"></param>
-        /// <param name="Cx"></param>
-        /// <param name="Cy"></param>
-        /// <returns></returns>
-        internal static float DotProduct(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
-        {
-            // Get the vectors' coordinates.
-            float BAx = Ax - Bx;
-            float BAy = Ay - By;
-            float BCx = Cx - Bx;
-            float BCy = Cy - By;
-
-            // Calculate the dot product.
-            return (BAx * BCx + BAy * BCy);
-        }
-        /// <summary>
-        /// Return the angle ABC.
-        /// Return a value between PI and -PI.
-        /// Note that the value is the opposite of what you might
-        /// expect because Y coordinates increase downward.
-        /// </summary>
-        /// <param name="Ax"></param>
-        /// <param name="Ay"></param>
-        /// <param name="Bx"></param>
-        /// <param name="By"></param>
-        /// <param name="Cx"></param>
-        /// <param name="Cy"></param>
-        /// <returns></returns>
-        internal static float GetAngle(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
-        {
-            // Get the dot product.
-            float dot_product = DotProduct(Ax, Ay, Bx, By, Cx, Cy);
-
-            // Get the cross product.
-            float cross_product = CrossProductLength(Ax, Ay, Bx, By, Cx, Cy);
-
-            // Calculate the angle.
-            return (float)Math.Atan2(cross_product, dot_product);
-        }
-        #endregion
+        }        
 
         #region MathHelperMethods
         /// <summary>
@@ -463,16 +292,6 @@ namespace TKGameUtilities
             // There's no check to see if min > max.
             return value;
         }
-        ///// <summary>
-        ///// Distance
-        ///// </summary>
-        ///// <param name="value1">First value</param>
-        ///// <param name="value2">Second value</param>
-        ///// <returns>Result</returns>
-        //public static float Distance(float value1, float value2)
-        //{
-        //    return Math.Abs(value1 - value2);
-        //}
         /// <summary>
         /// Hermite
         /// </summary>
@@ -512,26 +331,6 @@ namespace TKGameUtilities
         {
             return value1 + (value2 - value1) * amount;
         }
-        ///// <summary>
-        ///// Math.Max(value1, value2)
-        ///// </summary>
-        ///// <param name="value1">First value</param>
-        ///// <param name="value2">Second value</param>
-        ///// <returns>The bigger value</returns>
-        //public static float Max(float value1, float value2)
-        //{
-        //    return Math.Max(value1, value2);
-        //}
-        ///// <summary>
-        ///// Math.Min(value1, value2)
-        ///// </summary>
-        ///// <param name="value1">First value</param>
-        ///// <param name="value2">Second value</param>
-        ///// <returns>The smaller value</returns>
-        //public static float Min(float value1, float value2)
-        //{
-        //    return Math.Min(value1, value2);
-        //}
         /// <summary>
         /// Smooth step
         /// </summary>
@@ -548,40 +347,43 @@ namespace TKGameUtilities
             result = Hermite(value1, 0f, value2, 0f, result);
             return result;
         }
-        ///// <summary>
-        ///// Reduces a given angle to a value between π and -π.
-        ///// </summary>
-        ///// <param name="angle">Angle to reduce, in radians</param>
-        ///// <returns>Result</returns>
-        //public static float ReduceAngleRadians(float angle)
-        //{
-        //    angle = (float)Math.IEEERemainder((double)angle, 6.2831854820251465); //2xPi precission is double
-        //    if (angle <= -3.141593f)
-        //    {
-        //        angle += 6.283185f;
-        //        return angle;
-        //    }
-        //    if (angle > 3.141593f)
-        //    {
-        //        angle -= 6.283185f;
-        //    }
-        //    return angle;
-        //}
+        /// <summary>
+        /// Reduces a given angle to a value between π and -π.
+        /// </summary>
+        /// <param name="radians">Angle to reduce, in radians</param>
+        /// <returns>Result</returns>
+        public static float ReduceAngleRadians(float radians)
+        {
+            radians = (float)Math.IEEERemainder((double)radians, 6.2831854820251465); //2xPi precission is double
+            if (radians <= -3.141593f)
+            {
+                radians += 6.283185f;
+                return radians;
+            }
+            if (radians > 3.141593f)
+            {
+                radians -= 6.283185f;
+            }
+            return radians;
+        }
         #endregion
 
-        #region Vector2Ext
-        public static void Rotate(this Vector2 vector, float rotation, Vector2 relative)
+        public static Vector2 Rotate(Vector2 vector, float rotation, Vector2 relative)
         {
             //x' = (x - x2) * cos(rot) - (y - y2) * sin(rot) + x2
             //y' = (x - x2) * sin(rot) + (y - y2) * cos(rot) + y2
 
-            float sin = (float)Math.Sin(ToRadians(rotation));
-            float cos = (float)Math.Cos(ToRadians(rotation));
+            Vector2 result = new Vector2();
+
+            float sin = (float)Math.Sin(GameMath.ToRadians(rotation));
+            float cos = (float)Math.Cos(GameMath.ToRadians(rotation));
             float px = vector.X - relative.X;
             float py = vector.Y - relative.Y;
 
-            vector.X = px * cos - py * sin + relative.X;
-            vector.Y = px * sin + py * cos + relative.Y;
+            result.X = px * cos - py * sin + relative.X;
+            result.Y = px * sin + py * cos + relative.Y;
+
+            return result;
         }
         public static Vector2 Rotate(ref Vector2 vector, ref float rotation, ref Vector2 relative)
         {
@@ -590,8 +392,8 @@ namespace TKGameUtilities
 
             Vector2 result = new Vector2();
 
-            float sin = (float)Math.Sin(ToRadians(rotation));
-            float cos = (float)Math.Cos(ToRadians(rotation));
+            float sin = (float)Math.Sin(GameMath.ToRadians(rotation));
+            float cos = (float)Math.Cos(GameMath.ToRadians(rotation));
             float px = vector.X - relative.X;
             float py = vector.Y - relative.Y;
 
@@ -601,18 +403,22 @@ namespace TKGameUtilities
             return result;
         }
 
-        public static void RotateRad(this Vector2 vector, float rotationRad, Vector2 relative)
+        public static Vector2 RotateRad(Vector2 vector, float rotationRad, Vector2 relative)
         {
             //x' = (x - x2) * cos(rot) - (y - y2) * sin(rot) + x2
             //y' = (x - x2) * sin(rot) + (y - y2) * cos(rot) + y2
+
+            Vector2 result = new Vector2();
 
             float sin = (float)Math.Sin(rotationRad);
             float cos = (float)Math.Cos(rotationRad);
             float px = vector.X - relative.X;
             float py = vector.Y - relative.Y;
 
-            vector.X = px * cos - py * sin + relative.X;
-            vector.Y = px * sin + py * cos + relative.Y;
+            result.X = px * cos - py * sin + relative.X;
+            result.Y = px * sin + py * cos + relative.Y;
+
+            return result;
         }
         public static Vector2 RotateRad(ref Vector2 vector, ref float rotationRad, ref Vector2 relative)
         {
@@ -631,6 +437,5 @@ namespace TKGameUtilities
 
             return result;
         }
-        #endregion
     }
 }

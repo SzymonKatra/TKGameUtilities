@@ -18,41 +18,41 @@ namespace TKGameUtilities
     public class Polygon : IEnumerable<Vector2>, ICloneable<Polygon>
     {
         #region Properties
-        private List<Vector2> _points = new List<Vector2>();
-        private List<Vector2> _edges = new List<Vector2>();
-        private Vector2 _position = Vector2.Zero;
-        private Vector2 _origin = Vector2.Zero;
-        private float _rotation = 0f;
-        private List<PolygonTriangle> _triangles = null; 
-        private bool _edgesNeedUpdate = true;
-        private bool _trianglesNeedUpdate = true;
-        private bool _isConvex = false;
-        private bool _isConvexNeedUpdate = true;
-        private bool _isOrientedClockwise = false;
-        private bool _isOrientedClockwiseNeedUpdate = true;
+        private List<Vector2> m_points = new List<Vector2>();
+        private List<Vector2> m_edges = new List<Vector2>();
+        private Vector2 m_position = Vector2.Zero;
+        private Vector2 m_origin = Vector2.Zero;
+        private float m_rotation = 0f;
+        private List<PolygonTriangle> m_triangles = null; 
+        private bool m_edgesNeedUpdate = true;
+        private bool m_trianglesNeedUpdate = true;
+        private bool m_isConvex = false;
+        private bool m_isConvexNeedUpdate = true;
+        private bool m_isOrientedClockwise = false;
+        private bool m_isOrientedClockwiseNeedUpdate = true;
         
         /// <summary>
         /// Edges of polygon
         /// </summary>
         protected List<Vector2> Edges
         {
-            get { return _edges; }
+            get { return m_edges; }
         }
         /// <summary>
         /// Points of polygon
         /// </summary>
         protected List<Vector2> Points
         {
-            get { return _points; }
-            set { _points = value; }
+            get { return m_points; }
+            set { m_points = value; }
         }
         /// <summary>
         /// Triangles in polygon
         /// </summary>
         protected internal List<PolygonTriangle> Triangles
         {
-            get { return _triangles; }
-            protected set { _triangles = value; }
+            get { return m_triangles; }
+            protected set { m_triangles = value; }
         }
         /// <summary>
         /// Center of polygon
@@ -63,13 +63,13 @@ namespace TKGameUtilities
             {
                 float totalX = 0;
                 float totalY = 0;
-                for (int i = 0; i < _points.Count; i++)
+                for (int i = 0; i < m_points.Count; i++)
                 {
-                    totalX += _points[i].X;
-                    totalY += _points[i].Y;
+                    totalX += m_points[i].X;
+                    totalY += m_points[i].Y;
                 }
 
-                return new Vector2(totalX / (float)_points.Count, totalY / (float)_points.Count);
+                return new Vector2(totalX / (float)m_points.Count, totalY / (float)m_points.Count);
             }
         }
         /// <summary>
@@ -77,11 +77,11 @@ namespace TKGameUtilities
         /// </summary>
         public Vector2 Position
         {
-            get { return _position; }
+            get { return m_position; }
             set
             {
-                Vector2 offset = value - _position;
-                _position = value;
+                Vector2 offset = value - m_position;
+                m_position = value;
 
                 Move(offset);
             }
@@ -91,11 +91,11 @@ namespace TKGameUtilities
         /// </summary>
         public Vector2 Origin
         {
-            get { return _origin; }
+            get { return m_origin; }
             set
             {
-                Vector2 offset = value - _origin;
-                _origin = value;
+                Vector2 offset = value - m_origin;
+                m_origin = value;
 
                 Move(-offset);
             }
@@ -105,25 +105,27 @@ namespace TKGameUtilities
         /// </summary>
         public float Rotation
         {
-            get { return _rotation; }
+            get { return m_rotation; }
             set
             {
-                float rotRad = GameMath.ToRadians(GameMath.AdjustAngle(value - _rotation));
-                _rotation = GameMath.AdjustAngle(value);
-                Vector2 rotateRelative = _position;// +_origin;
+                float rotRad = GameMath.ToRadians(GameMath.ReduceAngle(value - m_rotation));
+                m_rotation = GameMath.ReduceAngle(value);
+                Vector2 rotateRelative = m_position;// +_origin;
 
-                for (int i = 0; i < _points.Count; ++i)
+                for (int i = 0; i < m_points.Count; ++i)
                 {
-                    _points[i].RotateRad(rotRad, rotateRelative);
+                    //_points[i].RotateRad(rotRad, rotateRelative);
+                    m_points[i] = GameMath.RotateRad(m_points[i], rotRad, rotateRelative);
                     //_points[i] = Vector2.Rotate(_points[i], rotRad, rotateRelative);
                 }
-                if (_triangles != null)
+                if (m_triangles != null)
                 {
-                    for (int i = 0; i < _triangles.Count; i++)
+                    for (int i = 0; i < m_triangles.Count; i++)
                     {
-                        for (int j = 0; j < _triangles[i]._points.Count; j++)
+                        for (int j = 0; j < m_triangles[i].m_points.Count; j++)
                         {
-                            _triangles[i]._points[j].RotateRad(rotRad, rotateRelative);
+                            //_triangles[i]._points[j].RotateRad(rotRad, rotateRelative);
+                            m_triangles[i].m_points[j] = GameMath.RotateRad(m_triangles[i].m_points[j], rotRad, rotateRelative);
                             //_triangles[i]._points[j] = Vector2.Rotate(_triangles[i]._points[j], rotRad, rotateRelative);
                         }
                     }
@@ -137,20 +139,20 @@ namespace TKGameUtilities
         {
             get
             {
-                if (_isOrientedClockwiseNeedUpdate)
+                if (m_isOrientedClockwiseNeedUpdate)
                 {
-                    _isOrientedClockwise = IsOrientedClockwise(_points);
-                    _isOrientedClockwiseNeedUpdate = false;
+                    m_isOrientedClockwise = IsOrientedClockwise(m_points);
+                    m_isOrientedClockwiseNeedUpdate = false;
                 }
-                return _isOrientedClockwise;
+                return m_isOrientedClockwise;
                 //return IsOrientedClockwise(_points);
             }
             set
             {
                 if (value)
-                    OrientClockwise(_points);
+                    OrientClockwise(m_points);
                 else
-                    OrientCounterClockwise(_points);
+                    OrientCounterClockwise(m_points);
             }
         }
         /// <summary>
@@ -160,8 +162,8 @@ namespace TKGameUtilities
         {
             get
             {
-                if (_isConvexNeedUpdate) _isConvex = IsConvex(_points);
-                return _isConvex;
+                if (m_isConvexNeedUpdate) m_isConvex = IsConvex(m_points);
+                return m_isConvex;
             }
         }
         /// <summary>
@@ -169,7 +171,7 @@ namespace TKGameUtilities
         /// </summary>
         public int PointCount
         {
-            get { return _points.Count; }
+            get { return m_points.Count; }
         }
         /// <summary>
         /// If polygon is concave it returns number of triangles in polygon which he have from triangulation
@@ -180,13 +182,13 @@ namespace TKGameUtilities
             {
                 if (!Convex)
                 {
-                    if (_trianglesNeedUpdate)
+                    if (m_trianglesNeedUpdate)
                     {
-                        _triangles = Triangulate(_points);
-                        _trianglesNeedUpdate = false;
+                        m_triangles = Triangulate(m_points);
+                        m_trianglesNeedUpdate = false;
                     }
                 }
-                return (_triangles == null ? -1 : _triangles.Count);
+                return (m_triangles == null ? -1 : m_triangles.Count);
             }
         }
         /// <summary>
@@ -198,11 +200,11 @@ namespace TKGameUtilities
         {
             get
             {
-                return _points[index];
+                return m_points[index];
             }
             set
             {
-                _points[index] = value;
+                m_points[index] = value;
                 NeedUpdateReset();
             }
         }
@@ -221,10 +223,10 @@ namespace TKGameUtilities
         /// <param name="rectangle">Rectangle</param>
         public Polygon(Rectangle rectangle)
         {
-            _points.Add(Vector2.Zero);
-            _points.Add(new Vector2(rectangle.Size.X, 0));
-            _points.Add(rectangle.Size);
-            _points.Add(new Vector2(0, rectangle.Size.Y));
+            m_points.Add(Vector2.Zero);
+            m_points.Add(new Vector2(rectangle.Size.X, 0));
+            m_points.Add(rectangle.Size);
+            m_points.Add(new Vector2(0, rectangle.Size.Y));
 
             Position = rectangle.Position;
         }
@@ -234,8 +236,8 @@ namespace TKGameUtilities
         /// <param name="line">Line</param>
         public Polygon(Line line)
         {
-            _points.Add(Vector2.Zero);
-            _points.Add(line.End - line.Start);
+            m_points.Add(Vector2.Zero);
+            m_points.Add(line.End - line.Start);
 
             Position = line.Start;
         }
@@ -245,26 +247,26 @@ namespace TKGameUtilities
         /// <param name="polygon">Polygon</param>
         protected Polygon(Polygon polygon)
         {
-            this._points = new List<Vector2>(polygon._points);
-            this._edges = new List<Vector2>(polygon._edges);
-            this._position = polygon._position;
-            this._origin = polygon._origin;
-            this._rotation = polygon._rotation;
-            this._triangles = null;
-            if (polygon._triangles != null)
+            this.m_points = new List<Vector2>(polygon.m_points);
+            this.m_edges = new List<Vector2>(polygon.m_edges);
+            this.m_position = polygon.m_position;
+            this.m_origin = polygon.m_origin;
+            this.m_rotation = polygon.m_rotation;
+            this.m_triangles = null;
+            if (polygon.m_triangles != null)
             {
-                this._triangles = new List<PolygonTriangle>();
-                foreach (PolygonTriangle tri in polygon._triangles)
+                this.m_triangles = new List<PolygonTriangle>();
+                foreach (PolygonTriangle tri in polygon.m_triangles)
                 {
-                    this._triangles.Add((PolygonTriangle)tri.Clone());
+                    this.m_triangles.Add((PolygonTriangle)tri.Clone());
                 }
             }
-            this._edgesNeedUpdate = polygon._edgesNeedUpdate;
-            this._trianglesNeedUpdate = polygon._trianglesNeedUpdate;
-            this._isConvex = polygon._isConvex;
-            this._isConvexNeedUpdate = polygon._isConvexNeedUpdate;
-            this._isOrientedClockwise = polygon._isOrientedClockwise;
-            this._isOrientedClockwiseNeedUpdate = polygon._isOrientedClockwiseNeedUpdate;
+            this.m_edgesNeedUpdate = polygon.m_edgesNeedUpdate;
+            this.m_trianglesNeedUpdate = polygon.m_trianglesNeedUpdate;
+            this.m_isConvex = polygon.m_isConvex;
+            this.m_isConvexNeedUpdate = polygon.m_isConvexNeedUpdate;
+            this.m_isOrientedClockwise = polygon.m_isOrientedClockwise;
+            this.m_isOrientedClockwiseNeedUpdate = polygon.m_isOrientedClockwiseNeedUpdate;
         }
         #endregion
 
@@ -321,15 +323,15 @@ namespace TKGameUtilities
         /// <returns>True if collides, otherwise false</returns>
         protected virtual bool ConvexCollision(Polygon polygon, out Vector2 mtv)
         {
-            if (_edgesNeedUpdate)
+            if (m_edgesNeedUpdate)
             {
                 BuildEdges();
-                _edgesNeedUpdate = false;
+                m_edgesNeedUpdate = false;
             }
-            if (polygon._edgesNeedUpdate)
+            if (polygon.m_edgesNeedUpdate)
             {
                 polygon.BuildEdges();
-                polygon._edgesNeedUpdate = false;
+                polygon.m_edgesNeedUpdate = false;
             }
 
             int edgeCountA = this.Edges.Count;
@@ -423,16 +425,16 @@ namespace TKGameUtilities
             //    _edgesNeedUpdate = false;
             //}
 
-            if (polygon._trianglesNeedUpdate)
+            if (polygon.m_trianglesNeedUpdate)
             {
-                polygon._triangles = Triangulate(polygon._points);
-                polygon._trianglesNeedUpdate = false;
+                polygon.m_triangles = Triangulate(polygon.m_points);
+                polygon.m_trianglesNeedUpdate = false;
             }
 
             Vector2 mtvSum = mtv;
             bool collision = false;
 
-            foreach (PolygonTriangle tri in polygon._triangles)
+            foreach (PolygonTriangle tri in polygon.m_triangles)
             {
                 if (this.ConvexCollision(tri, out mtv))
                 {
@@ -460,16 +462,16 @@ namespace TKGameUtilities
             //    polygon._edgesNeedUpdate = false;
             //}
 
-            if (_trianglesNeedUpdate)
+            if (m_trianglesNeedUpdate)
             {
-                _triangles = Triangulate(_points);
-                _trianglesNeedUpdate = false;
+                m_triangles = Triangulate(m_points);
+                m_trianglesNeedUpdate = false;
             }
 
             Vector2 mtvSum = mtv;
             bool collision = false;
 
-            foreach (PolygonTriangle tri in _triangles)
+            foreach (PolygonTriangle tri in m_triangles)
             {
                 if (tri.ConvexCollision(polygon, out mtv))
                 {
@@ -491,24 +493,24 @@ namespace TKGameUtilities
         {
             mtv = Vector2.Zero;
 
-            if (_trianglesNeedUpdate)
+            if (m_trianglesNeedUpdate)
             {
-                _triangles = Triangulate(_points);
-                _trianglesNeedUpdate = false;
+                m_triangles = Triangulate(m_points);
+                m_trianglesNeedUpdate = false;
             }
 
-            if (polygon._trianglesNeedUpdate)
+            if (polygon.m_trianglesNeedUpdate)
             {
-                polygon._triangles = Triangulate(polygon._points);
-                polygon._trianglesNeedUpdate = false;
+                polygon.m_triangles = Triangulate(polygon.m_points);
+                polygon.m_trianglesNeedUpdate = false;
             }
 
             Vector2 mtvSum = mtv;
             bool collision = false;
 
-            foreach (PolygonTriangle myTri in _triangles)
+            foreach (PolygonTriangle myTri in m_triangles)
             {
-                foreach (PolygonTriangle otherTri in polygon._triangles)
+                foreach (PolygonTriangle otherTri in polygon.m_triangles)
                 {
                     if (myTri.ConvexCollision(otherTri, out mtv))
                     {
@@ -580,7 +582,7 @@ namespace TKGameUtilities
         /// <param name="point">Point</param>
         public void AddPoint(Vector2 point)
         {
-            _points.Add(point);
+            m_points.Add(point);
             NeedUpdateReset();
         }
         /// <summary>
@@ -590,7 +592,7 @@ namespace TKGameUtilities
         /// <returns>Specified point</returns>
         public Vector2 GetPoint(int index)
         {
-            return _points[index];
+            return m_points[index];
         }
         /// <summary>
         /// Set specified point of polygon.
@@ -599,7 +601,7 @@ namespace TKGameUtilities
         /// <param name="point">Point</param>
         public void SetPoint(int index, Vector2 point)
         {
-            _points[index] = point;
+            m_points[index] = point;
             NeedUpdateReset();
         }
         /// <summary>
@@ -609,21 +611,21 @@ namespace TKGameUtilities
         /// <returns>Copy of triangle</returns>
         public PolygonTriangle GetTriangle(int index)
         {
-            PolygonTriangle orgTri = _triangles[index];
+            PolygonTriangle orgTri = m_triangles[index];
             PolygonTriangle copy = new PolygonTriangle(orgTri.A, orgTri.B, orgTri.C);
-            copy._position = _position;
-            copy._origin = _origin;
-            copy._rotation = _rotation;
+            copy.m_position = m_position;
+            copy.m_origin = m_origin;
+            copy.m_rotation = m_rotation;
             return copy;
         }
         public Vector2 GetEdge(int index)
         {
-            if (_edgesNeedUpdate)
+            if (m_edgesNeedUpdate)
             {
                 BuildEdges();
-                _edgesNeedUpdate = false;
+                m_edgesNeedUpdate = false;
             }
-            return _edges[index];
+            return m_edges[index];
         }
 
         /// <summary>
@@ -639,13 +641,13 @@ namespace TKGameUtilities
             }
             else
             {
-                if (_trianglesNeedUpdate)
+                if (m_trianglesNeedUpdate)
                 {
-                    _triangles = Triangulate(_points);
-                    _trianglesNeedUpdate = false;
+                    m_triangles = Triangulate(m_points);
+                    m_trianglesNeedUpdate = false;
                 }
 
-                foreach (PolygonTriangle tri in _triangles)
+                foreach (PolygonTriangle tri in m_triangles)
                 {
                     if (ConvexContains(tri, point)) return true;
                 }
@@ -674,14 +676,14 @@ namespace TKGameUtilities
         {
             // Get the angle between the point and the
             // first and last vertices.
-            int max_point = polygon._points.Count - 1;
-            float total_angle = GameMath.GetAngle(polygon._points[max_point].X, polygon._points[max_point].Y, point.X, point.Y, polygon._points[0].X, polygon._points[0].Y);
+            int max_point = polygon.m_points.Count - 1;
+            float total_angle = GetAngle(polygon.m_points[max_point].X, polygon.m_points[max_point].Y, point.X, point.Y, polygon.m_points[0].X, polygon.m_points[0].Y);
 
             // Add the angles from the point
             // to each other pair of vertices.
             for (int i = 0; i < max_point; i++)
             {
-                total_angle += GameMath.GetAngle(polygon._points[i].X, polygon._points[i].Y, point.X, point.Y, polygon._points[i + 1].X, polygon._points[i + 1].Y);
+                total_angle += GetAngle(polygon.m_points[i].X, polygon.m_points[i].Y, point.X, point.Y, polygon.m_points[i + 1].X, polygon.m_points[i + 1].Y);
             }
 
             // The total angle should be 2 * PI or -2 * PI if
@@ -697,10 +699,10 @@ namespace TKGameUtilities
         /// </summary>
         protected void NeedUpdateReset()
         {
-            _isConvexNeedUpdate = true;
-            _trianglesNeedUpdate = true;
-            _edgesNeedUpdate = true;
-            _isOrientedClockwiseNeedUpdate = true;
+            m_isConvexNeedUpdate = true;
+            m_trianglesNeedUpdate = true;
+            m_edgesNeedUpdate = true;
+            m_isOrientedClockwiseNeedUpdate = true;
         }
         /// <summary>
         /// Build polygon edges
@@ -709,37 +711,37 @@ namespace TKGameUtilities
         {
             Vector2 p1;
             Vector2 p2;
-            _edges.Clear();
-            for (int i = 0; i < _points.Count; i++)
+            m_edges.Clear();
+            for (int i = 0; i < m_points.Count; i++)
             {
-                p1 = _points[i];
-                if (i + 1 >= _points.Count)
+                p1 = m_points[i];
+                if (i + 1 >= m_points.Count)
                 {
-                    p2 = _points[0];
+                    p2 = m_points[0];
                 }
                 else
                 {
-                    p2 = _points[i + 1];
+                    p2 = m_points[i + 1];
                 }
-                _edges.Add(p2 - p1);
+                m_edges.Add(p2 - p1);
             }
         }
         private void Move(Vector2 offset)
         {
             //move points
-            for (int i = 0; i < _points.Count; i++)
+            for (int i = 0; i < m_points.Count; i++)
             {
-                _points[i] += offset;
+                m_points[i] += offset;
             }
 
             //move triangles if polygon is tringulated
-            if (_triangles != null)
+            if (m_triangles != null)
             {
-                for (int i = 0; i < _triangles.Count; i++)
+                for (int i = 0; i < m_triangles.Count; i++)
                 {
-                    for (int j = 0; j < _triangles[i].Points.Count; j++)
+                    for (int j = 0; j < m_triangles[i].Points.Count; j++)
                     {
-                        _triangles[i].Points[j] += offset;
+                        m_triangles[i].Points[j] += offset;
                     }
                 }
             }
@@ -747,10 +749,10 @@ namespace TKGameUtilities
 
         public void PerformTriangulate()
         {
-            if (_trianglesNeedUpdate)
+            if (m_trianglesNeedUpdate)
             {
-                _triangles = Triangulate(_points);
-                _trianglesNeedUpdate = false;
+                m_triangles = Triangulate(m_points);
+                m_trianglesNeedUpdate = false;
             }
         }
         
@@ -778,7 +780,7 @@ namespace TKGameUtilities
                 B = (A + 1) % nuPoints;
                 C = (B + 1) % nuPoints;
 
-                float cross_product = GameMath.CrossProductLength(points[A].X, points[A].Y, points[B].X, points[B].Y, points[C].X, points[C].Y);
+                float cross_product = CrossProductLength(points[A].X, points[A].Y, points[B].X, points[B].Y, points[C].X, points[C].Y);
                 if (cross_product < 0)
                 {
                     got_negative = true;
@@ -846,7 +848,7 @@ namespace TKGameUtilities
         private static bool IsEar(List<Vector2> points, int a, int b, int c)
         {
             // See if the angle ABC is concave.
-            if (GameMath.GetAngle(points[a].X, points[a].Y, points[b].X, points[b].Y, points[c].X, points[c].Y) > 0)
+            if (GetAngle(points[a].X, points[a].Y, points[b].X, points[b].Y, points[c].X, points[c].Y) > 0)
             {
                 // This is a concave corner so the triangle
                 // cannot be an ear.
@@ -929,8 +931,8 @@ namespace TKGameUtilities
             result.CollisionPoint = endPoint;
 
             Polygon line = new Polygon();
-            line._isConvex = true;
-            line._isConvexNeedUpdate = false;
+            line.m_isConvex = true;
+            line.m_isConvexNeedUpdate = false;
             line.AddPoint(startPoint);
             line.AddPoint(endPoint);
 
@@ -996,11 +998,87 @@ namespace TKGameUtilities
         /// <returns>Enumerator</returns>
         public IEnumerator<Vector2> GetEnumerator()
         {
-            return _points.GetEnumerator();
+            return m_points.GetEnumerator();
         }
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return _points.GetEnumerator();
+            return m_points.GetEnumerator();
+        }
+        #endregion
+
+        #region PolygonUtilities
+        /// <summary>
+        /// Return the cross product AB x BC.
+        /// The cross product is a vector perpendicular to AB
+        /// and BC having length |AB| * |BC| * Sin(theta) and
+        /// with direction given by the right-hand rule.
+        /// For two vectors in the X-Y plane, the result is a
+        /// vector with X and Y components 0 so the Z component
+        /// gives the vector's length and direction.
+        /// </summary>
+        /// <param name="Ax"></param>
+        /// <param name="Ay"></param>
+        /// <param name="Bx"></param>
+        /// <param name="By"></param>
+        /// <param name="Cx"></param>
+        /// <param name="Cy"></param>
+        /// <returns></returns>
+        internal static float CrossProductLength(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
+        {
+            // Get the vectors' coordinates.
+            float BAx = Ax - Bx;
+            float BAy = Ay - By;
+            float BCx = Cx - Bx;
+            float BCy = Cy - By;
+
+            // Calculate the Z coordinate of the cross product.
+            return (BAx * BCy - BAy * BCx);
+        }
+        /// <summary>
+        /// Return the dot product AB · BC.
+        /// Note that AB · BC = |AB| * |BC| * Cos(theta).
+        /// </summary>
+        /// <param name="Ax"></param>
+        /// <param name="Ay"></param>
+        /// <param name="Bx"></param>
+        /// <param name="By"></param>
+        /// <param name="Cx"></param>
+        /// <param name="Cy"></param>
+        /// <returns></returns>
+        internal static float DotProduct(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
+        {
+            // Get the vectors' coordinates.
+            float BAx = Ax - Bx;
+            float BAy = Ay - By;
+            float BCx = Cx - Bx;
+            float BCy = Cy - By;
+
+            // Calculate the dot product.
+            return (BAx * BCx + BAy * BCy);
+        }
+        /// <summary>
+        /// Return the angle ABC.
+        /// Return a value between PI and -PI.
+        /// Note that the value is the opposite of what you might
+        /// expect because Y coordinates increase downward.
+        /// </summary>
+        /// <param name="Ax"></param>
+        /// <param name="Ay"></param>
+        /// <param name="Bx"></param>
+        /// <param name="By"></param>
+        /// <param name="Cx"></param>
+        /// <param name="Cy"></param>
+        /// <returns></returns>
+        internal static float GetAngle(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
+        {
+            // Get the dot product.
+            float dot_product = DotProduct(Ax, Ay, Bx, By, Cx, Cy);
+
+            // Get the cross product.
+            float cross_product = CrossProductLength(Ax, Ay, Bx, By, Cx, Cy);
+
+            // Calculate the angle.
+            return (float)Math.Atan2(cross_product, dot_product);
         }
         #endregion
 
@@ -1020,10 +1098,10 @@ namespace TKGameUtilities
         {
             string result = "";
 
-            for (int i = 0; i < _points.Count; i++)
+            for (int i = 0; i < m_points.Count; i++)
             {
                 if (result != "") result += " ";
-                result += "{" + _points[i].ToString() + "}";
+                result += "{" + m_points[i].ToString() + "}";
             }
 
             return result;

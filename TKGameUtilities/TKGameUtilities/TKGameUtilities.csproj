@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Circle.cs" />
     <Compile Include="DU.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="GameHandler.cs" />
     <Compile Include="GameMath.cs" />
     <Compile Include="GameTime.cs" />

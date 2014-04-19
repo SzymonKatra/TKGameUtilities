@@ -77,7 +77,7 @@ namespace TKGameUtilities.Graphics
                 Font.GlyphInfo glyph = font.GetGlyph(charCode);
                 if (rotation != 0)
                 {
-                    float distance = GameMath.PointDistance(position, currentPosition);
+                    float distance = position.DistanceTo(currentPosition);
 #if FAST
                     Add(glyph.Texture, glyph.Area, position + new Vector2(GameMath.FastCos(rotation) * distance, GameMath.FastSin(rotation) * distance), color, scale, origin, rotation);
 #else

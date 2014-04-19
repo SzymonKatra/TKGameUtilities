@@ -82,7 +82,7 @@ namespace TKGameUtilities
         /// <returns>True if circles are overlapping</returns>
         public bool Intersects(Circle other)
         {
-            return (GameMath.PointDistance(this.Center, other.Center) <= this.Radius + other.Radius);
+            return (this.Center.DistanceTo(other.Center) <= this.Radius + other.Radius);
         }
         /// <summary>
         /// Checks the circle overlaps with other rectangle
@@ -100,7 +100,7 @@ namespace TKGameUtilities
         /// <returns>True if point inside the circle</returns>
         public bool IsPointInside(Vector2 point)
         {
-            return (GameMath.PointDistance(this.Center, point) <= this.Radius);
+            return (this.Center.DistanceTo(point) <= this.Radius);
         }
 
         /// <summary>
