@@ -17,6 +17,17 @@ namespace TKGameUtilities.Graphics
         public int Start;
         public int Count;
         public IndexBuffer IndexBuffer;
+
+        public static readonly VertexBufferDrawOptions Default = new VertexBufferDrawOptions()
+        {
+            Blending = BlendOptions.Default,
+            Transform = Matrix4.Identity,
+            Texture = null,
+            PrimitiveType = PrimitiveType.Points,
+            Start = 0,
+            Count = 0,
+            IndexBuffer = null,
+        };
     }
 
     /// <summary>
