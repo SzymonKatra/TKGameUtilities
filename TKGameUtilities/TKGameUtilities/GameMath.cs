@@ -240,6 +240,18 @@ namespace TKGameUtilities
             return RandomFloat(randomizer, min, max);
         }        
 
+        public static int PowInt(int x, int y)
+        {
+            int result = 1;
+            while (y > 0)
+            {
+                if ((y & 1) > 0) result *= x; // (y % 2) > 0
+                x *= x;
+                y >>= 1;
+            }
+            return result;
+        }
+
         #region MathHelperMethods
         /// <summary>
         /// Barycentric
