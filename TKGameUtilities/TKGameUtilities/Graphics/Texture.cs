@@ -30,6 +30,10 @@ namespace TKGameUtilities.Graphics
             : this(image.Size, image.Data, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelInternalFormat.Rgba)
         {
         }
+        public Texture(Point2 size, byte[] data)
+            : this(size, data, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelInternalFormat.Rgba)
+        {
+        }
         public Texture(Point2 size, IntPtr dataPtr, OpenTK.Graphics.OpenGL.PixelFormat pixelFormat, PixelInternalFormat internalPixelFormat, PixelType pixelType)
         {
             CreateFromPtr(size, dataPtr, pixelFormat, internalPixelFormat, pixelType);

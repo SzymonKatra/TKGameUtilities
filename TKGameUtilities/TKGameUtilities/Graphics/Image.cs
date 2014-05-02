@@ -5,11 +5,25 @@ using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace TKGameUtilities.Graphics
 {
-    public class Image
+    public class Image : ICloneable<Image>
     {
+        public enum ImageFormat
+        {
+            Bmp,
+            Emf,
+            Exif,
+            Gif,
+            Icon,
+            Jpeg,
+            Png,
+            Tiff,
+            Wmf,
+        }
+
         #region Constructors
         public Image(string fileName)
         {
@@ -20,12 +34,12 @@ namespace TKGameUtilities.Graphics
             m_data = new byte[bitmapData.Width * bitmapData.Height * 4];
             Marshal.Copy(bitmapData.Scan0, m_data, 0, bitmapData.Width * bitmapData.Height * 4);
 
-            //reorder bytes from BGRA to RGBA
+            //reorder bytes from BGRA to RGBA (on little endian)
             for (int i = 0; i < m_data.Length; i+= 4)
             {
-                byte r = m_data[i];
+                byte temp = m_data[i];
                 m_data[i] = m_data[i + 2];
-                m_data[i + 2] = r;
+                m_data[i + 2] = temp;
             }
 
             m_size = new Point2(bitmapData.Width, bitmapData.Height);
@@ -68,7 +82,7 @@ namespace TKGameUtilities.Graphics
             }
             set
             {
-                int offset = (int)((uint)m_size.X * y + x);
+                int offset = (int)((uint)m_size.X * y + x) * 4;
                 m_data[offset + R_OFFSET] = value.R;
                 m_data[offset + G_OFFSET] = value.G;
                 m_data[offset + B_OFFSET] = value.B;
@@ -78,6 +92,61 @@ namespace TKGameUtilities.Graphics
         #endregion
 
         #region Methods
+        public void Clear(Color color)
+        {
+            for (uint y = 0; y < m_size.Y; y++)
+            {
+                for (uint x = 0; x < m_size.X; x++)
+                {
+                    this[x, y] = color;
+                }
+            }
+        }
+
+        public void Save(string fileName)
+        {
+            System.Drawing.Imaging.ImageFormat imageFormat = ObtainImageFormat(fileName);
+            using (FileStream fileStream = new FileStream(fileName, FileMode.Create))
+            {
+                Save(fileStream, imageFormat);
+            }
+        }
+        public void Save(string fileName, TKGameUtilities.Graphics.Image.ImageFormat imageFormat)
+        {
+            using (FileStream fileStream = new FileStream(fileName, FileMode.Create))
+            {
+                Save(fileStream, imageFormat);
+            }
+        }
+        public void Save(Stream stream, TKGameUtilities.Graphics.Image.ImageFormat imageFormat)
+        {
+            Save(stream, ToGdiImageFormat(imageFormat));
+        }
+        private unsafe void Save(Stream stream, System.Drawing.Imaging.ImageFormat imageFormat)
+        {
+            Bitmap bitmap = new Bitmap(m_size.X, m_size.Y);
+
+            BitmapData bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            Marshal.Copy(m_data, 0, bitmapData.Scan0, m_data.Length);
+
+            //reorder bytes from RGBA to BGRA (on little endian)
+            for (int i = 0; i < m_data.Length; i += 4)
+            {
+                byte* ind0Ptr = (byte*)(bitmapData.Scan0 + i).ToPointer();
+                byte* ind2Ptr = (byte*)(bitmapData.Scan0 + i + 2).ToPointer();
+
+                byte temp = *ind0Ptr;
+                *ind0Ptr = *ind2Ptr;
+                *ind2Ptr = temp;
+            }
+
+            bitmap.UnlockBits(bitmapData);
+
+            bitmap.Save(stream, imageFormat);
+
+            bitmap.Dispose();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -87,8 +156,47 @@ namespace TKGameUtilities.Graphics
         /// <returns></returns>
         public int ComputeArrayPointer(uint x, uint y, int componentOffset)
         {
-            return (int)((uint)m_size.X * y + x + componentOffset);
+            return (int)((uint)m_size.X * y + x) * 4 + componentOffset;
         }
-        #endregion
+
+        public Image Clone()
+        {
+            Image result = new Image(m_size);
+            Buffer.BlockCopy(this.m_data, 0, result.Data, 0, m_data.Length);
+            return result;
+        }
+
+        private System.Drawing.Imaging.ImageFormat ToGdiImageFormat(TKGameUtilities.Graphics.Image.ImageFormat imageFormat)
+        {
+            switch (imageFormat)
+            {
+                case ImageFormat.Bmp: return System.Drawing.Imaging.ImageFormat.Bmp;
+                case ImageFormat.Emf: return System.Drawing.Imaging.ImageFormat.Emf;
+                case ImageFormat.Exif: return System.Drawing.Imaging.ImageFormat.Exif;
+                case ImageFormat.Gif: return System.Drawing.Imaging.ImageFormat.Gif;
+                case ImageFormat.Icon: return System.Drawing.Imaging.ImageFormat.Icon;
+                case ImageFormat.Jpeg: return System.Drawing.Imaging.ImageFormat.Jpeg;
+                case ImageFormat.Png: return System.Drawing.Imaging.ImageFormat.Png;
+                case ImageFormat.Tiff: return System.Drawing.Imaging.ImageFormat.Tiff;
+                case ImageFormat.Wmf: return System.Drawing.Imaging.ImageFormat.Wmf;
+            }
+
+            return System.Drawing.Imaging.ImageFormat.MemoryBmp;
+        }
+        private System.Drawing.Imaging.ImageFormat ObtainImageFormat(string fileName)
+        {
+            if (fileName.EndsWith(".bmp") || fileName.EndsWith(".dib")) return System.Drawing.Imaging.ImageFormat.Bmp;
+            else if (fileName.EndsWith(".emf")) return System.Drawing.Imaging.ImageFormat.Emf;
+            else if (fileName.EndsWith(".exif")) return System.Drawing.Imaging.ImageFormat.Exif;
+            else if (fileName.EndsWith(".gif")) return System.Drawing.Imaging.ImageFormat.Gif;
+            else if (fileName.EndsWith(".ico")) return System.Drawing.Imaging.ImageFormat.Icon;
+            else if (fileName.EndsWith(".jpg") || fileName.EndsWith(".jpeg") || fileName.EndsWith(".jpe") || fileName.EndsWith(".jif") || fileName.EndsWith(".jfif") || fileName.EndsWith(".jfi")) return System.Drawing.Imaging.ImageFormat.Jpeg;
+            else if (fileName.EndsWith(".png")) return System.Drawing.Imaging.ImageFormat.Png;
+            else if (fileName.EndsWith(".tif") || fileName.EndsWith(".tiff")) return System.Drawing.Imaging.ImageFormat.Tiff;
+            else if (fileName.EndsWith(".wmf")) return System.Drawing.Imaging.ImageFormat.Wmf;
+
+            return System.Drawing.Imaging.ImageFormat.MemoryBmp;;
+        }
+        #endregion   
     }
 }
