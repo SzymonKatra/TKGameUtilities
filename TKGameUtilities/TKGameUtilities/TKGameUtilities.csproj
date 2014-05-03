@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AngularAcceleration.cs" />
     <Compile Include="Circle.cs" />
     <Compile Include="DU.cs" />
     <Compile Include="Extensions.cs" />
@@ -79,8 +80,10 @@
     <Compile Include="Graphics\VertexPositionColor.cs" />
     <Compile Include="Graphics\VertexPositionColorTexCoords.cs" />
     <Compile Include="Graphics\Window.cs" />
+    <Compile Include="IAcceleration.cs" />
     <Compile Include="ICloneable.cs" />
     <Compile Include="Line.cs" />
+    <Compile Include="LinearAcceleration.cs" />
     <Compile Include="Point2.cs" />
     <Compile Include="Polygon.cs" />
     <Compile Include="PolygonTriangle.cs" />
@@ -88,6 +91,7 @@
     <Compile Include="RayCastResult.cs" />
     <Compile Include="Rectangle.cs" />
     <Compile Include="RectangleInt.cs" />
+    <Compile Include="Velocity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

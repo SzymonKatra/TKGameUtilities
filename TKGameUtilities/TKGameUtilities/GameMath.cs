@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define FAST
+
+using System;
 using OpenTK;
 //FastSin/Cos copied from http://en.sfml-dev.org/forums/index.php?topic=10564.0 thanks to krzat
 
@@ -40,9 +42,11 @@ namespace TKGameUtilities
     public static class GameMath
     {
         #region Constant
+#if FAST
         private static readonly float[] m_fastSinTable;
         private static readonly float[] m_fastCosTable;
-        private const int m_lookupSize = 1024; //has to be power of 2
+        private const int m_lookupSize = 8192; //has to be power of 2
+#endif
         private static float m_maxSinCosError = -1.0f;
 
         /// <summary> Float E </summary>
@@ -74,6 +78,7 @@ namespace TKGameUtilities
         {
             get
             {
+#if FAST
                 if (m_maxSinCosError < 0)
                 {
                     for (var i = 1; i < m_lookupSize; i++)
@@ -83,12 +88,16 @@ namespace TKGameUtilities
                     m_maxSinCosError /= 2;
                 }
                 return m_maxSinCosError;
+#else
+                return 0f;
+#endif
             }
         }
         #endregion
 
         static GameMath()
         {
+#if FAST
             m_fastSinTable = new float[m_lookupSize];
             m_fastCosTable = new float[m_lookupSize];
 
@@ -97,32 +106,33 @@ namespace TKGameUtilities
                 m_fastSinTable[i] = (float)Math.Sin(i * Math.PI / m_lookupSize * 2);
                 m_fastCosTable[i] = (float)Math.Cos(i * Math.PI / m_lookupSize * 2);
             }
-
-            //float max = 0;
-            //for (var i = 1; i < _lookupSize; i++)
-            //{
-            //    max = Math.Max(max, Math.Abs(_getSin[i] - _getSin[i - 1]));
-            //}
-            //max /= 2;
-            //System.Diagnostics.Debug.WriteLine("Max sin/cos error is: " + max);
+#endif
         }
 
         #region Fast
         /// <summary>
-        /// Fast innacurate sinus
+        /// Float sinus
         /// </summary>
         /// <param name="a">Value, in degrees</param>
-        public static float FastSin(float a)
+        public static float FSin(float a)
         {
+#if FAST
             return m_fastSinTable[(int)(a * (m_lookupSize / 360f) + 0.5f) & (m_lookupSize - 1)];
+#else
+            return (float)Math.Sin(ToRadians(a));
+#endif
         }
         /// <summary>
-        /// Fast innacurate cosinus
+        /// Float cosinus
         /// </summary>
         /// <param name="a">Value, in degrees</param>
-        public static float FastCos(float a)
+        public static float FCos(float a)
         {
+#if FAST
             return m_fastCosTable[(int)(a * (m_lookupSize / 360f) + 0.5f) & (m_lookupSize - 1)];
+#else
+            return (float)Math.Cos(ToRadians(a));
+#endif
         }
         #endregion
 

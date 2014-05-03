@@ -1,6 +1,4 @@
-﻿#define FAST
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -117,18 +115,8 @@ namespace TKGameUtilities.Graphics
 
             ApplyTexture(texture);
 
-#if FAST
-            float cos = GameMath.FastCos(rotation);
-            float sin = GameMath.FastSin(rotation);
-#else
-            float sin = 0, cos = 1;
-            if (rotation != 0)
-            {
-                rotation = GameMath.ToRadians(rotation);
-                sin = (float)Math.Sin(rotation);
-                cos = (float)Math.Cos(rotation);
-            }
-#endif
+            float cos = GameMath.FCos(rotation);
+            float sin = GameMath.FSin(rotation);
 
             float px = -origin.X * scale.X;
             float py = -origin.Y * scale.Y;

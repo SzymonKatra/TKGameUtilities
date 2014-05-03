@@ -1,6 +1,4 @@
-﻿#define FAST
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -78,12 +76,12 @@ namespace TKGameUtilities.Graphics
                 if (rotation != 0)
                 {
                     float distance = position.DistanceTo(currentPosition);
-#if FAST
-                    Add(glyph.Texture, glyph.Area, position + new Vector2(GameMath.FastCos(rotation) * distance, GameMath.FastSin(rotation) * distance), color, scale, origin, rotation);
-#else
-                    float rot = GameMath.ToRadians(rotation);
-                    Add(glyph.Texture, glyph.Area, position + new Vector2((float)Math.Cos(rot) * distance, (float)Math.Cos(rot) * distance), color, scale, origin, rotation);
-#endif
+//#if FAST
+                    Add(glyph.Texture, glyph.Area, position + new Vector2(GameMath.FCos(rotation) * distance, GameMath.FSin(rotation) * distance), color, scale, origin, rotation);
+//#else
+//                  float rot = GameMath.ToRadians(rotation);
+//                  Add(glyph.Texture, glyph.Area, position + new Vector2((float)Math.Cos(rot) * distance, (float)Math.Cos(rot) * distance), color, scale, origin, rotation);
+//#endif
                 }
                 else
                 {
