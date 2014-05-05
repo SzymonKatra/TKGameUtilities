@@ -73,16 +73,32 @@ namespace TKGameUtilities.Graphics
             get { return m_size; }
         }
 
-        public Color this[uint x, uint y]
+        //public Color this[uint x, uint y]
+        //{
+        //    get
+        //    {
+        //        int offset = (int)((uint)m_size.X * y + x) * 4;
+        //        return new Color(m_data[offset + R_OFFSET], m_data[offset + G_OFFSET], m_data[offset + B_OFFSET], m_data[offset + A_OFFSET]);
+        //    }
+        //    set
+        //    {
+        //        int offset = (int)((uint)m_size.X * y + x) * 4;
+        //        m_data[offset + R_OFFSET] = value.R;
+        //        m_data[offset + G_OFFSET] = value.G;
+        //        m_data[offset + B_OFFSET] = value.B;
+        //        m_data[offset + A_OFFSET] = value.A;
+        //    }
+        //}
+        public Color this[int x, int y]
         {
             get
             {
-                int offset = (int)((uint)m_size.X * y + x) * 4;
+                int offset = (m_size.X * y + x) * 4;
                 return new Color(m_data[offset + R_OFFSET], m_data[offset + G_OFFSET], m_data[offset + B_OFFSET], m_data[offset + A_OFFSET]);
             }
             set
             {
-                int offset = (int)((uint)m_size.X * y + x) * 4;
+                int offset = (m_size.X * y + x) * 4;
                 m_data[offset + R_OFFSET] = value.R;
                 m_data[offset + G_OFFSET] = value.G;
                 m_data[offset + B_OFFSET] = value.B;
@@ -94,9 +110,9 @@ namespace TKGameUtilities.Graphics
         #region Methods
         public void Clear(Color color)
         {
-            for (uint y = 0; y < m_size.Y; y++)
+            for (int y = 0; y < m_size.Y; y++)
             {
-                for (uint x = 0; x < m_size.X; x++)
+                for (int x = 0; x < m_size.X; x++)
                 {
                     this[x, y] = color;
                 }
@@ -154,9 +170,9 @@ namespace TKGameUtilities.Graphics
         /// <param name="y"></param>
         /// <param name="componentOffset">Image.R_OFFSET or Image.G_OFFSET or Image.B_OFFSET or Image.A_OFFSET</param>
         /// <returns></returns>
-        public int ComputeArrayPointer(uint x, uint y, int componentOffset)
+        public int ComputeArrayPointer(int x, int y, int componentOffset)
         {
-            return (int)((uint)m_size.X * y + x) * 4 + componentOffset;
+            return (m_size.X * y + x) * 4 + componentOffset;
         }
 
         public Image Clone()
