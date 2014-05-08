@@ -55,7 +55,7 @@
     <Compile Include="FixedPointMath\Fix64.cs" />
     <Compile Include="FixedPointMath\Fix64SinLut.cs" />
     <Compile Include="FixedPointMath\Fix64TanLut.cs" />
-    <Compile Include="FixedPointMath\Fix64Point2.cs" />
+    <Compile Include="FixedPointMath\Fix64Vector2.cs" />
     <Compile Include="FixedPointMath\Fix64Rectangle.cs" />
     <Compile Include="FixedPointMath\IFix64Acceleration.cs" />
     <Compile Include="FixedPointMath\Fix64LinearAcceleration.cs" />

@@ -10,7 +10,7 @@ namespace TKGameUtilities.FixedPointMath
     public struct Fix64Rectangle
     {
         #region Constructors
-        public Fix64Rectangle(Fix64Point2 position, Fix64Point2 size)
+        public Fix64Rectangle(Fix64Vector2 position, Fix64Vector2 size)
         {
             this.Position = position;
             this.Size = size;
@@ -18,8 +18,8 @@ namespace TKGameUtilities.FixedPointMath
         #endregion
 
         #region Properties
-        public Fix64Point2 Position;
-        public Fix64Point2 Size;
+        public Fix64Vector2 Position;
+        public Fix64Vector2 Size;
         #endregion
 
         #region Methods
@@ -85,7 +85,7 @@ namespace TKGameUtilities.FixedPointMath
         }
         public static explicit operator Fix64Rectangle(Rectangle rectangle)
         {
-            return new Fix64Rectangle((Fix64Point2)rectangle.Position, (Fix64Point2)rectangle.Size);
+            return new Fix64Rectangle((Fix64Vector2)rectangle.Position, (Fix64Vector2)rectangle.Size);
         }
 
         public static explicit operator RectangleInt(Fix64Rectangle rectangle)
@@ -94,7 +94,7 @@ namespace TKGameUtilities.FixedPointMath
         }
         public static explicit operator Fix64Rectangle(RectangleInt rectangle)
         {
-            return new Fix64Rectangle((Fix64Point2)rectangle.Position, (Fix64Point2)rectangle.Size);
+            return new Fix64Rectangle((Fix64Vector2)rectangle.Position, (Fix64Vector2)rectangle.Size);
         }
         #endregion
     }

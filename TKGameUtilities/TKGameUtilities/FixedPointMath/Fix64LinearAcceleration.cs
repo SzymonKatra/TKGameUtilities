@@ -13,19 +13,19 @@ namespace TKGameUtilities.FixedPointMath
         /// </summary>
         public static IFix64Acceleration Zero
         {
-            get { return new Fix64LinearAcceleration(Fix64Point2.Zero); }
+            get { return new Fix64LinearAcceleration(Fix64Vector2.Zero); }
         }
 
         /// <summary>
         /// Linear acceleration
         /// </summary>
-        public Fix64Point2 Acceleration;
+        public Fix64Vector2 Acceleration;
 
         /// <summary>
         /// Construct linear acceleration
         /// </summary>
         /// <param name="acceleration">Linear acceleration</param>
-        public Fix64LinearAcceleration(Fix64Point2 acceleration)
+        public Fix64LinearAcceleration(Fix64Vector2 acceleration)
         {
             Acceleration = acceleration;
         }

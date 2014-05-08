@@ -25,16 +25,16 @@ namespace TKGameUtilities.FixedPointMath
         public Fix64 Angle;
 
         /// <summary>Speed and direction translated to Vector2 velocity</summary>
-        public Fix64Point2 LinearVelocity
+        public Fix64Vector2 LinearVelocity
         {
             get
             {
-                return new Fix64Point2(Speed * Fix64.Cos(Angle), -(Speed * Fix64.Sin(Angle)));
+                return new Fix64Vector2(Speed * Fix64.Cos(Angle), -(Speed * Fix64.Sin(Angle)));
             }
             set
             {
-                Speed = Fix64Point2.Zero.DistanceTo(value);
-                Angle = Fix64Point2.Zero.AngleTo(value);
+                Speed = Fix64Vector2.Zero.DistanceTo(value);
+                Angle = Fix64Vector2.Zero.AngleTo(value);
             }
         }
         #endregion
@@ -45,10 +45,10 @@ namespace TKGameUtilities.FixedPointMath
             Speed = speed;
             Angle = angle;
         }
-        public Fix64Velocity(Fix64Point2 linear)
+        public Fix64Velocity(Fix64Vector2 linear)
         {
-            Speed = Fix64Point2.Zero.DistanceTo(linear);
-            Angle = Fix64Point2.Zero.AngleTo(linear);
+            Speed = Fix64Vector2.Zero.DistanceTo(linear);
+            Angle = Fix64Vector2.Zero.AngleTo(linear);
         }
         #endregion
 
