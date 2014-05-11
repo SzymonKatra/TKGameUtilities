@@ -29,7 +29,8 @@ namespace TKGameUtilities.FixedPointMath
         {
             get
             {
-                return new Fix64Vector2(Speed * Fix64.Cos(Angle), -(Speed * Fix64.Sin(Angle)));
+                Fix64 rad = Fix64.ToRadians(Angle);
+                return new Fix64Vector2(Speed * Fix64.Cos(rad), -(Speed * Fix64.Sin(rad)));
             }
             set
             {

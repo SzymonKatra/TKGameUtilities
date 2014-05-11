@@ -14,11 +14,11 @@ namespace TKGameUtilities
         }
         public static float AngleTo(this Vector2 a, Vector2 b)
         {
-            return GameMath.ToDegrees((float)(Math.Atan2((a.Y - b.Y), (b.X - a.X)))) % 360f;
+            return GameMath.ReduceAngle(GameMath.ToDegrees((float)(Math.Atan2((a.Y - b.Y), (b.X - a.X)))));
         }
         public static float AngleToRad(this Vector2 a, Vector2 b)
         {
-            return (float)(Math.Atan2((a.Y - b.Y), (b.X - a.X))) % GameMath.TwoPI;
+            return GameMath.ReduceAngleRadians((float)(Math.Atan2((a.Y - b.Y), (b.X - a.X))));
         }
 
         //public static void Rotate(this Vector2 vector, float rotation, Vector2 relative)

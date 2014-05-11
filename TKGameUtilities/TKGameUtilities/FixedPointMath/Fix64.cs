@@ -43,6 +43,7 @@ namespace TKGameUtilities.FixedPointMath
         const long PI = 0x3243F6A88;
         const long PI_OVER_2 = 0x1921FB544;
         const int LUT_SIZE = (int)(PI_OVER_2 >> 15);
+        static readonly Fix64 Degrees360 = (Fix64)360;
 
         public static Fix64 ToDegress(Fix64 radians)
         {
@@ -55,6 +56,40 @@ namespace TKGameUtilities.FixedPointMath
         public static Fix64 Random(Random random, Fix64 min, Fix64 max)
         {
             return new Fix64(Math.Abs((long)((uint)random.Next() | ((uint)random.Next()) << 32)) % (max.RawValue - min.RawValue + 1) + min.RawValue);
+        }
+
+        public static Fix64 ReduceAngle(Fix64 degress)
+        {
+            degress = Fix64.IEEERemainder(degress, Degrees360);
+            if (degress <= Fix64.Zero)
+            {
+                degress += Degrees360;
+                return degress;
+            }
+            if (degress >= Degrees360)
+            {
+                degress -= Degrees360;
+            }
+            return degress;
+        }
+        public static Fix64 ReduceAngleRadians(Fix64 radians)
+        {
+            radians = Fix64.IEEERemainder(radians, Fix64.PiTimes2);
+            if (radians <= -Fix64.Pi)
+            {
+                radians += Fix64.PiTimes2;
+                return radians;
+            }
+            if (radians > Fix64.Pi)
+            {
+                radians -= Fix64.PiTimes2;
+            }
+            return radians;
+        }
+
+        public static Fix64 IEEERemainder(Fix64 x, Fix64 y)
+        {
+            return x - (y * Fix64.Round(x / y));
         }
 
         /// <summary>

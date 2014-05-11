@@ -91,11 +91,11 @@ namespace TKGameUtilities.FixedPointMath
         }
         public Fix64 AngleTo(Fix64Vector2 b)
         {
-            return Fix64.ToDegress(Fix64.Atan2((this.Y - b.Y), (b.X - this.X))) % (Fix64)360;
+            return Fix64.ReduceAngle(Fix64.ToDegress(Fix64.Atan2((this.Y - b.Y), (b.X - this.X))));
         }
         public Fix64 AngleToRad(Fix64Vector2 b)
         {
-            return Fix64.Atan2((this.Y - b.Y), (b.X - this.X)) % Fix64.PiTimes2;
+            return Fix64.ReduceAngleRadians(Fix64.Atan2((this.Y - b.Y), (b.X - this.X)));
         }
 
         public static explicit operator Vector2(Fix64Vector2 value)

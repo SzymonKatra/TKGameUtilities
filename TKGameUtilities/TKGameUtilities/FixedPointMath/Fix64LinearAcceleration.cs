@@ -36,7 +36,9 @@ namespace TKGameUtilities.FixedPointMath
         /// <param name="velocity">Velocity</param>
         public void ApplyAcceleration(ref Fix64Velocity velocity)
         {
-            velocity.LinearVelocity = Acceleration + velocity.LinearVelocity;
+            //velocity.LinearVelocity = Acceleration + velocity.LinearVelocity;
+            Fix64Vector2 start = velocity.LinearVelocity;
+            velocity.LinearVelocity = new Fix64Vector2(Acceleration.X + start.X, Acceleration.Y + start.Y);
         }
         /// <summary>
         /// Applies acceleration to velocity
