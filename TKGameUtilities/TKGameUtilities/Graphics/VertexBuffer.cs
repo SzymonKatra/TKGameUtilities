@@ -8,34 +8,15 @@ using OpenTK.Graphics.OpenGL;
 
 namespace TKGameUtilities.Graphics
 {
-    public struct VertexBufferDrawOptions
-    {
-        public BlendOptions Blending;
-        public Matrix4 Transform;
-        public Texture Texture;
-        public PrimitiveType PrimitiveType;
-        public int Start;
-        public int Count;
-        public IndexBuffer IndexBuffer;
-
-        public static readonly VertexBufferDrawOptions Default = new VertexBufferDrawOptions()
-        {
-            Blending = BlendOptions.Default,
-            Transform = Matrix4.Identity,
-            Texture = null,
-            PrimitiveType = PrimitiveType.Points,
-            Start = 0,
-            Count = 0,
-            IndexBuffer = null,
-        };
-    }
+    
 
     /// <summary>
     /// Vertex buffer
     /// </summary>
     /// <typeparam name="T">Vertex structure type</typeparam>
     /// <typeparam name="S">Shader class type</typeparam>
-    public abstract class VertexBuffer<T, S> : IDrawable<VertexBufferDrawOptions, S>, IDisposable
+    /// <typeparam name="O">Addidional options type</typeparam>
+    public abstract class VertexBuffer<T, S, O> : IDrawable<S, O>, IDisposable
     {
         #region Constructors
         protected VertexBuffer(BufferUsageHint usageHint)
@@ -99,7 +80,7 @@ namespace TKGameUtilities.Graphics
             BufferSubData(data, gpuOffset, start, count);
         }
 
-        public void Draw(RenderTarget target, S shader, VertexBufferDrawOptions options)
+        public void Draw(RenderTarget target, S shader, O options)
         {
             target.Activate();
 
@@ -110,7 +91,7 @@ namespace TKGameUtilities.Graphics
 
         protected abstract void BufferData(T[] data, BufferUsageHint usageHint, int start, int count);
         protected abstract void BufferSubData(T[] data, int gpuOffset, int start, int count);
-        protected abstract void DrawVertices(RenderTarget target, S shader, ref VertexBufferDrawOptions options);
+        protected abstract void DrawVertices(RenderTarget target, S shader, ref O options);
 
         public void Dispose()
         {

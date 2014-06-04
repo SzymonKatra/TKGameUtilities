@@ -31,8 +31,8 @@ namespace TKGameUtilities.Graphics
         #region Constructors
         public BaseSpriteBatch()
         {
-            m_vertexBuffer = new VertexBufferPositionColorTexCoords(BufferUsageHint.DynamicDraw);
-            m_vertices = new VertexPositionColorTexCoords[100 * 4];
+            m_vertexBuffer = new VertexBufferPCT(BufferUsageHint.DynamicDraw);
+            m_vertices = new VertexPCT[100 * 4];
             m_verticesCount = 0;
             m_previousVerticesCount = 0;
             m_active = false;
@@ -47,14 +47,14 @@ namespace TKGameUtilities.Graphics
         #region Properties
         private bool m_disposed = false;
 
-        private VertexBufferPositionColorTexCoords m_vertexBuffer;
-        protected VertexBufferPositionColorTexCoords VertexBuffer
+        private VertexBufferPCT m_vertexBuffer;
+        protected VertexBufferPCT VertexBuffer
         {
             get { return m_vertexBuffer; }
         }
 
-        private VertexPositionColorTexCoords[] m_vertices;
-        protected VertexPositionColorTexCoords[] Vertices
+        private VertexPCT[] m_vertices;
+        protected VertexPCT[] Vertices
         {
             get { return m_vertices; }
         }
@@ -123,12 +123,12 @@ namespace TKGameUtilities.Graphics
             scale.X *= textureRectangle.Size.X;
             scale.Y *= textureRectangle.Size.Y;
 
-            fixed(VertexPositionColorTexCoords* sptr = m_vertices)
+            fixed(VertexPCT* sptr = m_vertices)
             {
                 //x' = (x - x2) * cos(rot) - (y - y2) * sin(rot) + x2
                 //y' = (x - x2) * sin(rot) + (y - y2) * cos(rot) + y2
 
-                VertexPositionColorTexCoords* ptr = sptr + m_verticesCount;
+                VertexPCT* ptr = sptr + m_verticesCount;
 
                 ptr->Position.X = px * cos - py * sin + position.X;
                 ptr->Position.Y = px * sin + py * cos + position.Y;
@@ -192,7 +192,6 @@ namespace TKGameUtilities.Graphics
                 BatchItem item = m_activeItem;
                 item.Count = currentQueueVerticesCount;
                 m_drawQueue[m_queueCount] = item;
-                //m_drawQueue[m_queueCount] = new BatchItem() { Texture = m_activeTexture, Count = currentQueueVerticesCount };
 
                 ++m_queueCount;
             }  

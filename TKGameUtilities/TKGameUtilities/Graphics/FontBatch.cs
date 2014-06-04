@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace TKGameUtilities.Graphics
 {
-    public class FontBatch : BaseSpriteBatch, IDrawable<SpriteBatchDrawOptions, AlphaTexturedPrimitiveShader>
+    public class FontBatch : BaseSpriteBatch, IDrawable<AlphaTexturedPrimitiveShader, SpriteBatchDrawOptions>
     {
         public void Add(string text, Font font, Vector2 position, Color color)
         {
@@ -98,7 +98,7 @@ namespace TKGameUtilities.Graphics
         public void Draw(RenderTarget target, AlphaTexturedPrimitiveShader shader, SpriteBatchDrawOptions options)
         {
             int current = 0;
-            VertexBufferDrawOptions vbOptions = new VertexBufferDrawOptions()
+            VertexBufferPCTDrawOptions vbOptions = new VertexBufferPCTDrawOptions()
             {
                 Blending = options.Blending,
                 Transform = options.Transform,

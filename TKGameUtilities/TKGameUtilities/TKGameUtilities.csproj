@@ -84,10 +84,10 @@
     <Compile Include="Graphics\Texture.cs" />
     <Compile Include="Graphics\TexturedPrimitiveShader.cs" />
     <Compile Include="Graphics\VertexBuffer.cs" />
-    <Compile Include="Graphics\VertexBufferPositionColor.cs" />
-    <Compile Include="Graphics\VertexBufferPositionColorTexCoords.cs" />
-    <Compile Include="Graphics\VertexPositionColor.cs" />
-    <Compile Include="Graphics\VertexPositionColorTexCoords.cs" />
+    <Compile Include="Graphics\VertexBufferPC.cs" />
+    <Compile Include="Graphics\VertexBufferPCT.cs" />
+    <Compile Include="Graphics\VertexPC.cs" />
+    <Compile Include="Graphics\VertexPCT.cs" />
     <Compile Include="Graphics\Window.cs" />
     <Compile Include="IAcceleration.cs" />
     <Compile Include="ICloneable.cs" />

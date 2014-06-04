@@ -9,10 +9,10 @@ namespace TKGameUtilities.Graphics
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="T">Additional options</typeparam>
     /// <typeparam name="S">Shader</typeparam>
-    public interface IDrawable<T, S>
+    /// <typeparam name="O">Additional options</typeparam>
+    public interface IDrawable<S, O>
     {
-        void Draw(RenderTarget target, S shader, T options);
+        void Draw(RenderTarget target, S shader, O options);
     }
 }

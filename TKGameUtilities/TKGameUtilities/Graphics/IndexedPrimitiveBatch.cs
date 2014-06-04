@@ -19,14 +19,14 @@ namespace TKGameUtilities.Graphics
         };
     }
 
-    public class IndexedPrimitiveBatch : IDrawable<PrimitiveBatchDrawOptions, ColoredPrimitiveShader>, IDisposable
+    public class IndexedPrimitiveBatch : IDrawable<ColoredPrimitiveShader, PrimitiveBatchDrawOptions>, IDisposable
     {
         #region Constructors
         public IndexedPrimitiveBatch()
         {
-            m_vertexBuffer = new VertexBufferPositionColor(BufferUsageHint.DynamicDraw);
+            m_vertexBuffer = new VertexBufferPC(BufferUsageHint.DynamicDraw);
             m_indexBuffer = new IndexBuffer(BufferUsageHint.DynamicDraw, DrawElementsType.UnsignedInt);
-            m_vertices = new VertexPositionColor[100 * 3];
+            m_vertices = new VertexPC[100 * 3];
             m_indices = new uint[100 * 3];
             m_verticesCount = 0;
             m_indicesCount = 0;
@@ -37,9 +37,9 @@ namespace TKGameUtilities.Graphics
         #region Properties
         private bool m_disposed = false;
 
-        private VertexBufferPositionColor m_vertexBuffer;
+        private VertexBufferPC m_vertexBuffer;
         private IndexBuffer m_indexBuffer;
-        private VertexPositionColor[] m_vertices;
+        private VertexPC[] m_vertices;
         private uint[] m_indices;
 
         private int m_verticesCount;
@@ -104,11 +104,11 @@ namespace TKGameUtilities.Graphics
             if (m_verticesCount + lines.Count >= m_vertices.Length) Array.Resize(ref m_vertices, Math.Max(m_vertices.Length + lines.Count, m_vertices.Length * 2));
             if (m_indicesCount + lines.Count >= m_indices.Length) Array.Resize(ref m_indices, Math.Max(m_indices.Length + lines.Count, m_indices.Length * 2));
 
-            fixed(VertexPositionColor* verticesStartPtr = m_vertices)
+            fixed(VertexPC* verticesStartPtr = m_vertices)
             {
                 fixed(uint* indicesStartPtr = m_indices)
                 {
-                    VertexPositionColor* vPtr = verticesStartPtr + m_verticesCount;
+                    VertexPC* vPtr = verticesStartPtr + m_verticesCount;
                     uint* iPtr = indicesStartPtr + m_indicesCount;
 
                     foreach(Vector2 vec in lines)
@@ -128,7 +128,7 @@ namespace TKGameUtilities.Graphics
 
         public void Draw(RenderTarget target, ColoredPrimitiveShader shader, PrimitiveBatchDrawOptions options)
         {
-            VertexBufferDrawOptions vboOptions = new VertexBufferDrawOptions()
+            VertexBufferPCDrawOptions vboOptions = new VertexBufferPCDrawOptions()
             {
                 Blending = options.Blending,
                 Transform = options.Transform,

@@ -6,12 +6,12 @@ using OpenTK.Graphics.OpenGL;
 
 namespace TKGameUtilities.Graphics
 {
-    public class SpriteBatch : BaseSpriteBatch, IDrawable<SpriteBatchDrawOptions, TexturedPrimitiveShader>
+    public class SpriteBatch : BaseSpriteBatch, IDrawable<TexturedPrimitiveShader, SpriteBatchDrawOptions>
     {
         public void Draw(RenderTarget target, TexturedPrimitiveShader shader, SpriteBatchDrawOptions options)
         {
             int current = 0;
-            VertexBufferDrawOptions vbOptions = new VertexBufferDrawOptions()
+            VertexBufferPCTDrawOptions vbOptions = new VertexBufferPCTDrawOptions()
             {
                 Blending = options.Blending,
                 Transform = options.Transform,

@@ -9,11 +9,13 @@ using OpenTK.Graphics.OpenGL;
 
 namespace TKGameUtilities.Graphics
 {
+    /// <summary>
+    /// PC - PositonColor
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct VertexPositionColorTexCoords
+    public struct VertexPC
     {
         public Vector2 Position;
         public Color Color;
-        public Vector2 TexCoords;
     }
 }
