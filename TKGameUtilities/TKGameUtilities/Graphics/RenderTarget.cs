@@ -61,7 +61,7 @@ namespace TKGameUtilities.Graphics
             GL.Clear(ClearBufferMask.ColorBufferBit);
         }
 
-        public void PreDrawSetup(DisplayShader shader, BlendOptions blendOptions, Matrix4 transform, Texture texture, int textureMatrixLocation)
+        public void PreDrawSetup(DisplayShader shader, BlendOptions blendOptions, Matrix4 transform)//, Texture texture, int textureMatrixLocation)
         {
             Activate();
 
@@ -71,11 +71,6 @@ namespace TKGameUtilities.Graphics
             shader.Bind();
 
             GL.UniformMatrix4(shader.UniformProjectionMatrixLocation, false, ref m_projectionMatrix);
-            if (textureMatrixLocation >= 0)
-            {
-                Matrix4 texMatrix = texture.TextureMatrix;
-                GL.UniformMatrix4(textureMatrixLocation, false, ref texMatrix);
-            }
 
             if (m_cameraNeedUpdate)
             {
@@ -84,14 +79,6 @@ namespace TKGameUtilities.Graphics
             }
 
             GL.UniformMatrix4(shader.UniformModelViewMatrixLocation, false, ref transform);
-
-            if (textureMatrixLocation >= 0)
-            {
-                texture.Bind();
-
-                Matrix4 texMatrix = texture.TextureMatrix;
-                GL.UniformMatrix4(textureMatrixLocation, false, ref texMatrix);
-            }
         }
 
         public void ResetCache()

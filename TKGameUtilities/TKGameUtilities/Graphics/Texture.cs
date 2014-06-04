@@ -22,7 +22,7 @@ namespace TKGameUtilities.Graphics
             m_pixelFormat = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
 
             bitmap.UnlockBits(bitmapData);
-            ContextManager.ActivateDefaultIfNoCurrent();
+            //ContextManager.ActivateDefaultIfNoCurrent();
 
             bitmap.Dispose();
         }

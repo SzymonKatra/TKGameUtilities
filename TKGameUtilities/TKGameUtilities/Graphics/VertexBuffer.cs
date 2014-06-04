@@ -34,7 +34,6 @@ namespace TKGameUtilities.Graphics
     /// Vertex buffer
     /// </summary>
     /// <typeparam name="T">Vertex structure type</typeparam>
-    /// <typeparam name="D">Driver class type</typeparam>
     /// <typeparam name="S">Shader class type</typeparam>
     public abstract class VertexBuffer<T, S> : IDrawable<VertexBufferDrawOptions, S>, IDisposable
     {

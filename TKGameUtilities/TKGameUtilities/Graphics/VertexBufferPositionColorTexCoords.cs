@@ -36,7 +36,15 @@ namespace TKGameUtilities.Graphics
         }
         protected unsafe override void DrawVertices(RenderTarget target, TexturedPrimitiveShader shader, ref VertexBufferDrawOptions options)
         {
-            target.PreDrawSetup(shader, options.Blending, options.Transform, options.Texture, shader.UniformTextureMatrixLocation);
+            target.PreDrawSetup(shader, options.Blending, options.Transform);
+
+            if (shader.UniformTextureMatrixLocation >= 0)
+            {
+                options.Texture.Bind();
+
+                Matrix4 texMatrix = options.Texture.TextureMatrix;
+                GL.UniformMatrix4(shader.UniformTextureMatrixLocation, false, ref texMatrix);
+            }
 
             GL.EnableVertexAttribArray(shader.AttributeVertexPositionLocation);
             GL.EnableVertexAttribArray(shader.AttributeVertexColorLocation);

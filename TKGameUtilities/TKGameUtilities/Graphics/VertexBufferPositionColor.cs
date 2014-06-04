@@ -36,7 +36,7 @@ namespace TKGameUtilities.Graphics
         }
         protected unsafe override void DrawVertices(RenderTarget target, ColoredPrimitiveShader shader, ref VertexBufferDrawOptions options)
         {
-            target.PreDrawSetup(shader, options.Blending, options.Transform, null, -1);
+            target.PreDrawSetup(shader, options.Blending, options.Transform);
 
             GL.EnableVertexAttribArray(shader.AttributeVertexPositionLocation);
             GL.EnableVertexAttribArray(shader.AttributeVertexColorLocation);
