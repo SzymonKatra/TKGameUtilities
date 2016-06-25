@@ -4,6 +4,9 @@ TKGameUtilities is a library built on top of OpenTK to allow making high perform
 
 Library has high-level interfaces for drawing but if they not meet your requirements you can also use low-level and customize them.
 
+An example of use can be found [here](https://github.com/SzymonKatra/TKGameUtilities/tree/master/TKGameUtilities/Example/Program.cs).
+In new project you must add TKGameUtilities.dll and OpenTK.dll references to work properly.
+
 Features list:
 
 - OpenGL context management
