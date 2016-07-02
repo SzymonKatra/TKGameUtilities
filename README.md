@@ -1,6 +1,6 @@
 **Note: This project is discontinued and published for illustrative purposes.**
 
-**TKGameUtilities is a library built on top of OpenTK to allow making high performance OpenGL 2D games with easy to use interface.**
+**TKGameUtilities is a library built on top of OpenTK to allow making high performance OpenGL 2D games with easy to use object oriented interface.**
 
 Library has high-level interfaces for drawing but if they not meet your requirements you can also use low-level and customize them.
 
